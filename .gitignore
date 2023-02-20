@@ -3,3 +3,4 @@ downloads/*
 previews/*
 documentlists.csv
 documentlists.xlsx
+env/
