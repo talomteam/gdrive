@@ -1,8 +1,12 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from pydrive.auth import GoogleAuth
 from pydrive.drive import GoogleDrive
 from starlette.responses import FileResponse
 from starlette.exceptions import HTTPException
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import HTMLResponse
+from fastapi.responses import StreamingResponse
+
 
 from PyPDF2 import PdfReader, PdfWriter
 from os.path import exists
@@ -11,6 +15,8 @@ import pandas as pd
 
 
 app = FastAPI()
+
+app.mount("/previews", StaticFiles(directory="previews"), name="previews")
 
 gauth = GoogleAuth()
 gauth.CommandLineAuth()
@@ -43,12 +49,18 @@ async def download(file_id):
 async def preview(file_id):
 
     download_filename = 'downloads/%s.pdf' % (file_id)
-    out_filename = 'previews/%s.pdf' % (
-        file_id)
+    out_filename = 'previews/%s.pdf' % (file_id)
+
+
+
     file_preview_exists = exists(out_filename)
 
+    def iterfile():
+        with open(out_filename, mode="rb") as file_like:
+            yield from file_like
+
     if file_preview_exists:
-        return FileResponse(out_filename, media_type='application/octet-stream', filename=out_filename.split("/")[-1])
+        return StreamingResponse(iterfile(), media_type="application/pdf")
 
     file_download_exists = exists(download_filename)
     if not file_download_exists:
@@ -57,7 +69,7 @@ async def preview(file_id):
     pdf = PdfReader(open(download_filename, "rb"))
     pdf_writer = PdfWriter()
     pages = 5
-    
+
     if len(pdf.pages) < pages:
         pages = len(pdf.pages)
 
@@ -66,7 +78,7 @@ async def preview(file_id):
 
     pdf_writer.write(out_filename)
 
-    return FileResponse(out_filename, media_type='application/pdf', filename=out_filename.split("/")[-1])
+    return StreamingResponse(iterfile(), media_type="application/pdf")
 
 
 @app.get("/lists/{path}")
