@@ -66,7 +66,7 @@ async def preview(file_id):
 
     pdf_writer.write(out_filename)
 
-    return FileResponse(out_filename, media_type='application/octet-stream', filename=out_filename.split("/")[-1])
+    return FileResponse(out_filename, media_type='application/pdf', filename=out_filename.split("/")[-1])
 
 
 @app.get("/lists/{path}")
