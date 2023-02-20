@@ -83,7 +83,7 @@ async def preview(file_id):
 
 @app.get("/lists/{path}")
 async def lists(path):
-    try:
+    
         fieldnames = ["title", "id"]
         csv_filename = 'documentlists.csv'
         xls_filename = 'documentlists.xlsx'
@@ -124,5 +124,4 @@ async def lists(path):
         gfile.Upload()
 
         return {"message": "Please check google drive file name %s" % (xls_filename)}
-    except:
-        raise HTTPException(status_code=500, detail="Server Error")
+   
