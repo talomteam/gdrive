@@ -25,49 +25,48 @@ def getfile(file_id):
 
 @app.get("/download/{file_id}")
 async def download(file_id):
-    try:
-        generate_filename = 'downloads/%s.pdf' % (file_id)
-        file_exists = exists(generate_filename)
-        if file_exists:
-            return FileResponse(generate_filename, media_type='application/octet-stream', filename=generate_filename.split("/")[-1])
 
-        getfile(file_id)
+    generate_filename = 'downloads/%s.pdf' % (file_id)
+    file_exists = exists(generate_filename)
+    if file_exists:
+        return FileResponse(generate_filename, media_type='application/octet-stream', filename=generate_filename.split("/")[-1])
 
-        file_exists = exists(generate_filename)
+    getfile(file_id)
 
-        if file_exists:
-            return FileResponse(generate_filename, media_type='application/octet-stream', filename=generate_filename.split("/")[-1])
-        else:
-            raise HTTPException(status_code=404, detail="Item not found")
-    except:
-        raise HTTPException(status_code=500, detail="Server Error")
+    file_exists = exists(generate_filename)
+
+    if file_exists:
+        return FileResponse(generate_filename, media_type='application/octet-stream', filename=generate_filename.split("/")[-1])
 
 
 @app.get("/preview/{file_id}")
 async def preview(file_id):
-    try:
-        download_filename = 'downloads/%s.pdf' % (file_id)
-        out_filename = "previews/%s.pdf" % (file_id)
-        file_preview_exists = exists(out_filename)
 
-        if file_preview_exists:
-            return FileResponse(out_filename, media_type='application/octet-stream', filename=out_filename.split("/")[-1])
+    download_filename = 'downloads/%s.pdf' % (file_id)
+    out_filename = 'previews/%s.pdf' % (
+        file_id)
+    file_preview_exists = exists(out_filename)
 
-        file_download_exists = exists(download_filename)
-        if not file_download_exists:
-            getfile(file_id)
-
-        pdf = PdfReader(open(download_filename, "rb"))
-        pdf_writer = PdfWriter()
-        pages = 5
-        if len(pdf.pages) < len(pdf.pages):
-            pages = len(pdf.pages)
-            for page in range(pages):
-                pdf_writer.add_page(pdf.pages[page])
-            pdf_writer.write(out_filename)
+    if file_preview_exists:
         return FileResponse(out_filename, media_type='application/octet-stream', filename=out_filename.split("/")[-1])
-    except:
-        raise HTTPException(status_code=500, detail="Server Error")
+
+    file_download_exists = exists(download_filename)
+    if not file_download_exists:
+        getfile(file_id)
+
+    pdf = PdfReader(open(download_filename, "rb"))
+    pdf_writer = PdfWriter()
+    pages = 5
+    
+    if len(pdf.pages) < pages:
+        pages = len(pdf.pages)
+
+    for page in range(pages):
+        pdf_writer.add_page(pdf.pages[page])
+
+    pdf_writer.write(out_filename)
+
+    return FileResponse(out_filename, media_type='application/octet-stream', filename=out_filename.split("/")[-1])
 
 
 @app.get("/lists/{path}")
