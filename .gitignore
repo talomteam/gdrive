@@ -1,7 +1,7 @@
 credentails.json
-downloads/*
-previews/*
-documentlists.csv
-documentlists.xlsx
+downloads/
+previews/
+documentlists.csv 
+documentlists.xlsx 
 env/
 index.html

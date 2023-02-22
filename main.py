@@ -12,6 +12,7 @@ from PyPDF2 import PdfReader, PdfWriter
 from os.path import exists
 import csv
 import pandas as pd
+import base64
 
 
 app = FastAPI()
@@ -29,29 +30,50 @@ def getfile(file_id):
     file.GetContentFile(generate_filename)
 
 
+def encodeb64(fileb64):
+    data = fileb64
+    data_bytes = data.encode('ascii')
+    base64_bytes = base64.b64encode(data_bytes)
+    base64_string = base64_bytes.decode('ascii')    
+    return base64_string
+
+
+def decodeb64(fileb64):
+    base64_string = fileb64
+    base64_bytes = base64_string.encode('ascii')
+    data_bytes = base64.b64decode(base64_bytes)
+    data = data_bytes.decode('ascii')
+    return data
+
+
 @app.get("/download/{file_id}")
 async def download(file_id):
+    try:
+        generate_filename = 'downloads/%s.pdf' % (file_id)
+        file_exists = exists(generate_filename)
+        if file_exists:
+            return FileResponse(generate_filename, media_type='application/octet-stream', filename=generate_filename.split("/")[-1])
 
-    generate_filename = 'downloads/%s.pdf' % (file_id)
-    file_exists = exists(generate_filename)
-    if file_exists:
+        getfile(file_id)
+
+        file_exists = exists(generate_filename)
+
+        if not file_exists:
+            raise HTTPException(status_code=404, detail="Item not found")
+
         return FileResponse(generate_filename, media_type='application/octet-stream', filename=generate_filename.split("/")[-1])
 
-    getfile(file_id)
-
-    file_exists = exists(generate_filename)
-
-    if file_exists:
-        return FileResponse(generate_filename, media_type='application/octet-stream', filename=generate_filename.split("/")[-1])
+    except:
+        raise HTTPException(status_code=500, detail="Item not found")
 
 
-@app.get("/preview/{file_id}")
-async def preview(file_id):
+@app.get("/preview/{fileb64}")
+async def preview(fileb64):
+
+    file_id = decodeb64(fileb64)
 
     download_filename = 'downloads/%s.pdf' % (file_id)
     out_filename = 'previews/%s.pdf' % (file_id)
-
-
 
     file_preview_exists = exists(out_filename)
 
@@ -83,45 +105,56 @@ async def preview(file_id):
 
 @app.get("/lists/{path}")
 async def lists(path):
-    
-        fieldnames = ["title", "id"]
-        csv_filename = 'documentlists.csv'
-        xls_filename = 'documentlists.xlsx'
 
-        fcsv = open(csv_filename, 'w')
-        writer = csv.DictWriter(fcsv, fieldnames=fieldnames)
-        writer.writeheader()
+    fieldnames = ["title", "id", "preview", "download"]
+    csv_filename = 'documentlists.csv'
+    xls_filename = 'documentlists.xlsx'
 
+    fcsv = open(csv_filename, 'w')
+    writer = csv.DictWriter(fcsv, fieldnames=fieldnames)
+    writer.writeheader()
+
+    file_list = drive.ListFile(
+        {'q': "'{}' in parents and trashed=false".format(path)}).GetList()
+    for file in file_list:
+        if file['title'] == xls_filename:
+            file.Delete()
+        file_id = encodeb64(file['id'])
+        pdfjs_template = '[pdfjs-viewer url="https://bz-portal.xyz/gdrive/preview/{file_id}" viewer_width=100% viewer_height=800px fullscreen=true download=true print=true]'.format(
+            file_id=file_id)
+        download_template = 'https://bz-portal.xyz/gdrive/download/{file_id}'.format(
+            file_id=file['id'])
+        writer.writerow({"title": file['title'], "id": file['id'],
+                        "preview": pdfjs_template, "download": download_template})
+        # print('title: %s, id: %s' % (file['title'], file['id']))
+
+    # sub folder and file
+    folder_list = drive.ListFile(
+        {'q': "'{}' in parents and trashed=false and mimeType='application/vnd.google-apps.folder'".format(path)}).GetList()
+
+    for folder in folder_list:
+        # print('title: %s, id: %s' % (folder['title'], folder['id']))
         file_list = drive.ListFile(
-            {'q': "'{}' in parents and trashed=false".format(path)}).GetList()
+            {'q': "'{}' in parents and trashed=false".format(folder['id'])}).GetList()
         for file in file_list:
-            if file['title'] == xls_filename:
-                file.Delete()
-            writer.writerow({"title": file['title'], "id": file['id']})
-            # print('title: %s, id: %s' % (file['title'], file['id']))
+            file_id = encodeb64(file['id'])
+            pdfjs_template = '[pdfjs-viewer url= "https://bz-portal.xyz/gdrive/preview/{file_id}" viewer_width=100% viewer_height=800px fullscreen=true download=true print=true]'.format(
+                file_id=file_id)
+            download_template = 'https://bz-portal.xyz/gdrive/download/{file_id}'.format(
+                file_id=file['id'])
+            writer.writerow(
+                {"title": file['title'], "id": file['id'], "preview": pdfjs_template, "download": download_template})
+            # print('\t title: %s, id: %s' % (file['title'], file['id']))
 
-        # sub folder and file
-        folder_list = drive.ListFile(
-            {'q': "'{}' in parents and trashed=false and mimeType='application/vnd.google-apps.folder'".format(path)}).GetList()
+    fcsv.close()
 
-        for folder in folder_list:
-            # print('title: %s, id: %s' % (folder['title'], folder['id']))
-            file_list = drive.ListFile(
-                {'q': "'{}' in parents and trashed=false".format(folder['id'])}).GetList()
-            for file in file_list:
-                writer.writerow({"title": file['title'], "id": file['id']})
-                # print('\t title: %s, id: %s' % (file['title'], file['id']))
+    cvsDataframe = pd.read_csv(csv_filename)
+    resultExcelFile = pd.ExcelWriter(xls_filename)
+    cvsDataframe.to_excel(resultExcelFile, index=False)
+    resultExcelFile.save()
 
-        fcsv.close()
+    gfile = drive.CreateFile({'parents': [{'id': path}]})
+    gfile.SetContentFile(xls_filename)
+    gfile.Upload()
 
-        cvsDataframe = pd.read_csv(csv_filename)
-        resultExcelFile = pd.ExcelWriter(xls_filename)
-        cvsDataframe.to_excel(resultExcelFile, index=False)
-        resultExcelFile.save()
-
-        gfile = drive.CreateFile({'parents': [{'id': path}]})
-        gfile.SetContentFile(xls_filename)
-        gfile.Upload()
-
-        return {"message": "Please check google drive file name %s" % (xls_filename)}
-   
+    return {"message": "Please check google drive file name %s" % (xls_filename)}
