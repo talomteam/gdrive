@@ -22,7 +22,7 @@ gauth = GoogleAuth()
 gauth.CommandLineAuth()
 drive = GoogleDrive(gauth)
 
-key = b'ApG6cwOgJPiZ_me29ePFE5zfN20rxqLjbrop6YydSaQ='
+key = b''
 
 fernet = Fernet(key)
 
