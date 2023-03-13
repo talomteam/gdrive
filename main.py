@@ -11,8 +11,13 @@ from PyPDF2 import PdfReader, PdfWriter
 from os.path import exists
 import csv
 import pandas as pd
-import base64
 
+import os
+from os.path import join, dirname
+from dotenv import load_dotenv
+
+dotenv_path = join(dirname(__file__), '.env')
+load_dotenv(dotenv_path)
 
 app = FastAPI()
 
@@ -22,7 +27,10 @@ gauth = GoogleAuth()
 gauth.CommandLineAuth()
 drive = GoogleDrive(gauth)
 
-key = b''
+#print(os.environ.get("APP_KEY"))
+
+key = os.environ.get("APP_KEY")
+
 
 fernet = Fernet(key)
 
@@ -101,7 +109,7 @@ async def preview(fileb64):
         raise HTTPException(status_code=404, detail="Item not found")
 
 
-@app.get("/lists/{path}")
+@app.get("/list_test/{path}")
 async def lists(path):
     try:
         fieldnames = ["title", "id", "preview", "download"]
@@ -160,3 +168,69 @@ async def lists(path):
         return {"message": "Please check google drive file name %s" % (xls_filename)}
     except:
         raise HTTPException(status_code=404, detail="Path not found")
+
+
+@app.get("/lists/{path}")
+async def lists(path):
+    xls_filename = 'documentlists.xlsx'
+    file_dict = dict()
+    # Set the id of the Google Drive folder. You can find it in the URL of the google drive folder.
+    parent_folder_id = path
+    # Set the parent folder, where you want to store the contents of the google drive folder
+    parent_folder_dir = './'
+
+    if parent_folder_dir[-1] != '/':
+        parent_folder_dir = parent_folder_dir + '/'
+
+    folder_queue = [parent_folder_id]
+    dir_queue = [parent_folder_dir]
+    cnt = 0
+
+    while len(folder_queue) != 0:
+        current_folder_id = folder_queue.pop(0)
+        file_list = drive.ListFile(
+            {'q': "'{}' in parents and trashed=false".format(current_folder_id)}).GetList()
+
+        current_parent = dir_queue.pop(0)
+        print(current_parent, current_folder_id)
+        for file1 in file_list:
+            if file1['title'] == xls_filename:
+                file1.Delete()
+            file_dict[cnt] = dict()
+            file_dict[cnt]['id'] = file1['id']
+            file_dict[cnt]['title'] = file1['title']
+            file_dict[cnt]['dir'] = current_parent + file1['title']
+
+            if file1['mimeType'] == 'application/vnd.google-apps.folder':
+                file_dict[cnt]['type'] = 'folder'
+                file_dict[cnt]['dir'] += '/'
+                folder_queue.append(file1['id'])
+                dir_queue.append(file_dict[cnt]['dir'])
+                file_dict[cnt]['preview'] = ""
+                file_dict[cnt]['download'] = ""
+            else:
+                preview_file_id = encryptcp("preview"+file1['id'])
+                download_file_id = encryptcp("download"+file1['id'])
+                pdfjs_template = '[pdfjs-viewer url= "https://bz-portal.xyz/gdrive/preview/{file_id}" viewer_width=100% viewer_height=800px fullscreen=true download=true print=true]'.format(
+                    file_id=preview_file_id)
+                download_template = 'https://bz-portal.xyz/gdrive/download/{file_id}'.format(
+                    file_id=download_file_id)
+                file_dict[cnt]['type'] = 'file'
+                file_dict[cnt]['preview'] = pdfjs_template
+                file_dict[cnt]['download'] = download_template
+                
+                
+                
+
+            cnt += 1
+
+    cvsDataframe = pd.DataFrame(file_dict).transpose().head(10)
+    resultExcelFile = pd.ExcelWriter(xls_filename)
+    cvsDataframe.to_excel(resultExcelFile, index=False)
+    resultExcelFile.save()
+
+    gfile = drive.CreateFile({'parents': [{'id': path}]})
+    gfile.SetContentFile(xls_filename)
+    gfile.Upload()
+    
+    return {"message": "Please check google drive file name %s" % (xls_filename)}
