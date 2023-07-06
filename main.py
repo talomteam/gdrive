@@ -30,6 +30,7 @@ drive = GoogleDrive(gauth)
 # print(os.environ.get("APP_KEY"))
 
 key = os.environ.get("APP_KEY")
+domain = os.environ.get("DOMAIN_NAME")
 
 
 fernet = Fernet(key)
@@ -127,10 +128,10 @@ async def lists(path):
                 file.Delete()
             preview_file_id = encryptcp("preview"+file['id'])
             download_file_id = encryptcp("download"+file['id'])
-            pdfjs_template = '[pdfjs-viewer url="https://bz-portal.xyz/gdrive/preview/{file_id}" viewer_width=100% viewer_height=800px fullscreen=true download=true print=true]'.format(
-                file_id=preview_file_id)
-            download_template = 'https://bz-portal.xyz/gdrive/download/{file_id}'.format(
-                file_id=download_file_id)
+            pdfjs_template = '[pdfjs-viewer url="https://{domain}/gdrive/preview/{file_id}" viewer_width=100% viewer_height=800px fullscreen=true download=true print=true]'.format(
+                domain=domain,file_id=preview_file_id)
+            download_template = 'https://{domain}/gdrive/download/{file_id}'.format(
+                domain=domain,file_id=download_file_id)
             writer.writerow({"title": file['title'], "id": file['id'],
                             "preview": pdfjs_template, "download": download_template})
             # print('title: %s, id: %s' % (file['title'], file['id']))
@@ -146,10 +147,10 @@ async def lists(path):
             for file in file_list:
                 preview_file_id = encryptcp("preview"+file['id'])
                 download_file_id = encryptcp("download"+file['id'])
-                pdfjs_template = '[pdfjs-viewer url= "https://bz-portal.xyz/gdrive/preview/{file_id}" viewer_width=100% viewer_height=800px fullscreen=true download=true print=true]'.format(
-                    file_id=preview_file_id)
-                download_template = 'https://bz-portal.xyz/gdrive/download/{file_id}'.format(
-                    file_id=download_file_id)
+                pdfjs_template = '[pdfjs-viewer url= "https://{domain}/gdrive/preview/{file_id}" viewer_width=100% viewer_height=800px fullscreen=true download=true print=true]'.format(
+                    domain=domain,file_id=preview_file_id)
+                download_template = 'https://{domain}/gdrive/download/{file_id}'.format(
+                    domain=domain,file_id=download_file_id)
                 writer.writerow(
                     {"title": file['title'], "id": file['id'], "preview": pdfjs_template, "download": download_template})
                 # print('\t title: %s, id: %s' % (file['title'], file['id']))
@@ -219,10 +220,10 @@ async def lists(path):
             else:
                 preview_file_id = encryptcp("preview"+file1['id'])
                 download_file_id = encryptcp("download"+file1['id'])
-                pdfjs_template = '[pdfjs-viewer url= "https://bz-portal.xyz/gdrive/preview/{file_id}?start=1&end=4" viewer_width=100% viewer_height=800px fullscreen=true download=true print=true]'.format(
-                    file_id=preview_file_id)
-                download_template = 'https://bz-portal.xyz/gdrive/download/{file_id}'.format(
-                    file_id=download_file_id)
+                pdfjs_template = '[pdfjs-viewer url= "https://{domain}z/gdrive/preview/{file_id}?start=1&end=4" viewer_width=100% viewer_height=800px fullscreen=true download=true print=true]'.format(
+                    domain=domain,file_id=preview_file_id)
+                download_template = 'https://{domain}/gdrive/download/{file_id}'.format(
+                    domain=domain,file_id=download_file_id)
                 file_dict[cnt]['type'] = 'file'
                 file_dict[cnt]['preview'] = pdfjs_template
                 file_dict[cnt]['download'] = download_template
