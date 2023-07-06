@@ -219,7 +219,7 @@ async def lists(path):
             else:
                 preview_file_id = encryptcp("preview"+file1['id'])
                 download_file_id = encryptcp("download"+file1['id'])
-                pdfjs_template = '[pdfjs-viewer url= "https://bz-portal.xyz/gdrive/preview/{file_id}" viewer_width=100% viewer_height=800px fullscreen=true download=true print=true]'.format(
+                pdfjs_template = '[pdfjs-viewer url= "https://bz-portal.xyz/gdrive/preview/{file_id}?start=1&end=4" viewer_width=100% viewer_height=800px fullscreen=true download=true print=true]'.format(
                     file_id=preview_file_id)
                 download_template = 'https://bz-portal.xyz/gdrive/download/{file_id}'.format(
                     file_id=download_file_id)
