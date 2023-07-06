@@ -27,7 +27,7 @@ gauth = GoogleAuth()
 gauth.CommandLineAuth()
 drive = GoogleDrive(gauth)
 
-#print(os.environ.get("APP_KEY"))
+# print(os.environ.get("APP_KEY"))
 
 key = os.environ.get("APP_KEY")
 
@@ -72,7 +72,7 @@ async def download(fileb64):
 
 
 @app.get("/preview/{fileb64}")
-async def preview(fileb64):
+async def preview(fileb64,start: int = 1, end: int = 5 ):
     try:
         file_id = decryptcp(fileb64).split("preview")[1]
 
@@ -94,12 +94,12 @@ async def preview(fileb64):
 
         pdf = PdfReader(open(download_filename, "rb"))
         pdf_writer = PdfWriter()
-        pages = 5
+        #pages = 5
 
-        if len(pdf.pages) < pages:
-            pages = len(pdf.pages)
+        #if len(pdf.pages) < pages:
+        #    pages = len(pdf.pages)
 
-        for page in range(pages):
+        for page in range((start-1),end):
             pdf_writer.add_page(pdf.pages[page])
 
         pdf_writer.write(out_filename)
@@ -169,14 +169,22 @@ async def lists(path):
     except:
         raise HTTPException(status_code=404, detail="Path not found")
 
+@app.get("/heartbeat/{path}")
+async def heartbeat(path):
+    try:
+        file_list = drive.ListFile(
+                {'q': "'{}' in parents and trashed=false".format(path)}).GetList()
+        return {"message":"connected ok"}
+    except:
+        raise HTTPException(status_code=503, detail="Connect error")
+
 
 @app.get("/lists/{path}")
 async def lists(path):
     xls_filename = 'documentlists.xlsx'
     file_dict = dict()
-    # Set the id of the Google Drive folder. You can find it in the URL of the google drive folder.
+
     parent_folder_id = path
-    # Set the parent folder, where you want to store the contents of the google drive folder
     parent_folder_dir = './'
 
     if parent_folder_dir[-1] != '/':
@@ -218,9 +226,6 @@ async def lists(path):
                 file_dict[cnt]['type'] = 'file'
                 file_dict[cnt]['preview'] = pdfjs_template
                 file_dict[cnt]['download'] = download_template
-                
-                
-                
 
             cnt += 1
 
@@ -232,5 +237,5 @@ async def lists(path):
     gfile = drive.CreateFile({'parents': [{'id': path}]})
     gfile.SetContentFile(xls_filename)
     gfile.Upload()
-    
+
     return {"message": "Please check google drive file name %s" % (xls_filename)}
