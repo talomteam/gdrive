@@ -229,7 +229,8 @@ async def lists(path):
 
             cnt += 1
 
-    cvsDataframe = pd.DataFrame(file_dict).transpose().head(10)
+    #cvsDataframe = pd.DataFrame(file_dict).transpose().head(10)
+    cvsDataframe = pd.DataFrame(file_dict).transpose()
     resultExcelFile = pd.ExcelWriter(xls_filename)
     cvsDataframe.to_excel(resultExcelFile, index=False)
     resultExcelFile.save()
