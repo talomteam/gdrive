@@ -102,7 +102,8 @@ async def preview(fileb64,start: int = 1, end: int = 5 ):
 
         for page in range((start-1),end):
             pdf_writer.add_page(pdf.pages[page])
-
+        
+        pdf_writer.add_metadata(pdf.metadata)
         pdf_writer.write(out_filename)
 
         return StreamingResponse(iterfile(), media_type="application/pdf")
