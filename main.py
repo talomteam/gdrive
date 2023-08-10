@@ -16,6 +16,10 @@ import os
 from os.path import join, dirname
 from dotenv import load_dotenv
 
+from mysql.connector import Error
+from mysql.connector import pooling
+
+
 dotenv_path = join(dirname(__file__), '.env')
 load_dotenv(dotenv_path)
 
@@ -31,9 +35,31 @@ drive = GoogleDrive(gauth)
 
 key = os.environ.get("APP_KEY")
 domain = os.environ.get("DOMAIN_NAME")
+db_host = os.environ.get("DB_HOST")
+db_user = os.environ.get("DB_USER")
+db_password = os.environ.get("DB_PASSWORD")
+db_name = os.environ.get("DB_NAME")
 
 
 fernet = Fernet(key)
+
+try:
+    connection_pool = pooling.MySQLConnectionPool(pool_name="pynative_pool",
+                                                  pool_size=5,
+                                                  pool_reset_session=True,
+                                                  host=db_host,
+                                                  database=db_name,
+                                                  user=db_user,
+                                                  password=db_password)
+    print("Printing connection pool properties ")
+    print("Connection Pool Name - ", connection_pool.pool_name)
+    print("Connection Pool Size - ", connection_pool.pool_size)
+
+    # Get connection object from a pool
+    connection_db = connection_pool.get_connection()
+
+except Error as e:
+    print("Error while connecting to MySQL using Connection pool ", e)
 
 
 def getfile(file_id):
@@ -226,11 +252,17 @@ async def lists(path):
                 download_template = 'https://{domain}/gdrive/download/{file_id}'.format(
                     domain=domain,file_id=download_file_id)
                 file_dict[cnt]['type'] = 'file'
+                
                 file_dict[cnt]['preview'] = pdfjs_template
                 file_dict[cnt]['download'] = download_template
 
             cnt += 1
 
+    
+    for x in file_dict.items():
+        cursor = connection_db.cursor()
+        cursor.execute("INSERT INTO files (id,title,dir,review,download) values ('%s','%s','%s','%s','%s')"%(file_dict[x]["id"],file_dict[x]["title"],file_dict[x]["dir"],file_dict[x]["preview"],file_dict[x]["download"]))
+        
     #cvsDataframe = pd.DataFrame(file_dict).transpose().head(10)
     cvsDataframe = pd.DataFrame(file_dict).transpose()
     resultExcelFile = pd.ExcelWriter(xls_filename)
