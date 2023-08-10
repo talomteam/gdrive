@@ -264,9 +264,14 @@ async def lists(path):
     
     for x in file_dict:
         if file_dict[x]["type"] == "file" :
-           cursor = connection_db.cursor()
-           cursor.execute("INSERT INTO files (id,title,dir,preview,download) values ('%s','%s','%s','%s','%s')"%(file_dict[x]["id"],file_dict[x]["title"],file_dict[x]["dir"],file_dict[x]["preview"],file_dict[x]["download"]))
-           connection_db.commit()
+            try:
+                cursor = connection_db.cursor()
+                sql = "INSERT INTO files (id,title,dir,preview,download) values ('%s','%s','%s','%s','%s')"%(file_dict[x]["id"],file_dict[x]["title"],file_dict[x]["dir"],file_dict[x]["preview"],file_dict[x]["download"])
+                cursor.execute(sql)
+                connection_db.commit()
+            except:
+               print(sql)
+
         
     #cvsDataframe = pd.DataFrame(file_dict).transpose().head(10)
     cvsDataframe = pd.DataFrame(file_dict).transpose()
