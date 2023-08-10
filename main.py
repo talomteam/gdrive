@@ -18,7 +18,8 @@ from dotenv import load_dotenv
 
 #from mysql.connector import Error
 #from mysql.connector import pooling
-import mariadb
+#import mariadb
+from pymysqlpool.pool import Pool
 
 dotenv_path = join(dirname(__file__), '.env')
 load_dotenv(dotenv_path)
@@ -44,23 +45,25 @@ db_name = os.environ.get("DB_NAME")
 fernet = Fernet(key)
 
 try:
-    connection_pool =  mariadb.ConnectionPool(pool_name="pynative_pool",
-                                                  pool_size=5,
-                                                  pool_reset_connection=True,
-                                                  host=db_host,
-                                                  database=db_name,
-                                                  user=db_user,
-                                                  password=db_password,
-                                                  pool_validation_interval=250)
-    print("Printing connection pool properties ")
-    print("Connection Pool Name - ", connection_pool.pool_name)
-    print("Connection Pool Size - ", connection_pool.pool_size)
+    #connection_pool =  mariadb.ConnectionPool(pool_name="pynative_pool",
+    #                                              pool_size=5,
+    #                                              pool_reset_connection=True,
+    #                                              host=db_host,
+    #                                              database=db_name,
+    #                                              user=db_user,
+    #                                              password=db_password,
+    #                                              pool_validation_interval=250)
+    pool = Pool(host=db_host, port=3306, user=db_user, password=db_password, db=db_name,autocommit=True,ping_check=True)
+    #print("Printing connection pool properties ")
+    
+    #print("Connection Pool Name - ", connection_pool.pool_name)
+    #print("Connection Pool Size - ", connection_pool.pool_size)
 
     # Get connection object from a pool
-    connection_db = connection_pool.get_connection()
+    connection_db = pool.get_conn()
 
-except mariadb.PoolError as e:
-    print("Error while connecting to MySQL using Connection pool ", e)
+except :
+    print("Error while connecting to MySQL using Connection pool ")
 
 
 def getfile(file_id):
