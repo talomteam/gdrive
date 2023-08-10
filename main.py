@@ -53,7 +53,7 @@ try:
     #                                              user=db_user,
     #                                              password=db_password,
     #                                              pool_validation_interval=250)
-    pool = Pool(host=db_host, port=3306, user=db_user, password=db_password, db=db_name,autocommit=True,ping_check=True,interval=50)
+    pool = Pool(host=db_host, port=3306, user=db_user, password=db_password, db=db_name,autocommit=True,ping_check=True)
     #print("Printing connection pool properties ")
     
     #print("Connection Pool Name - ", connection_pool.pool_name)
