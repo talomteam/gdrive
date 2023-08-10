@@ -266,8 +266,9 @@ async def lists(path):
         if file_dict[x]["type"] == "file" :
             try:
                 cursor = connection_db.cursor()
-                sql = "INSERT INTO files (id,title,dir,preview,download) values (`%s`,`%s`,`%s`,`%s`,`%s`)"%(file_dict[x]["id"],file_dict[x]["title"],file_dict[x]["dir"],file_dict[x]["preview"],file_dict[x]["download"])
-                cursor.execute(sql)
+                sql = "INSERT INTO files (id,title,dir,preview,download) values (%s,%s,%s,%s,%s)"
+                val = (file_dict[x]["id"],file_dict[x]["title"],file_dict[x]["dir"],file_dict[x]["preview"],file_dict[x]["download"])
+                cursor.execute(sql,val)
                 connection_db.commit()
             except:
                print(sql)
