@@ -46,7 +46,7 @@ fernet = Fernet(key)
 try:
     connection_pool =  mariadb.ConnectionPool(pool_name="pynative_pool",
                                                   pool_size=5,
-                                                  pool_reset_session=True,
+                                                  pool_reset_connect=True,
                                                   host=db_host,
                                                   database=db_name,
                                                   user=db_user,
