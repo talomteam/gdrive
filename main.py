@@ -259,7 +259,7 @@ async def lists(path):
             cnt += 1
 
     
-    for x in file_dict.items():
+    for x in file_dict:
         if file_dict[x]["type"] == "file" :
            cursor = connection_db.cursor()
            cursor.execute("INSERT INTO files (id,title,dir,review,download) values ('%s','%s','%s','%s','%s')"%(file_dict[x]["id"],file_dict[x]["title"],file_dict[x]["dir"],file_dict[x]["preview"],file_dict[x]["download"]))
