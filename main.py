@@ -257,6 +257,8 @@ async def lists(path):
                 file_dict[cnt]['download'] = download_template
 
             cnt += 1
+            if cnt == 10:
+                break
         if cnt == 10:
             break
 
