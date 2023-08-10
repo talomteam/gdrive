@@ -261,12 +261,6 @@ async def lists(path):
                 file_dict[cnt]['download'] = download_template
 
             cnt += 1
-
-            if cnt == 50:
-                break
-        if cnt == 50:
-            break
-
     
     for x in file_dict:
         if file_dict[x]["type"] == "file" :
