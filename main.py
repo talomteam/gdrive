@@ -273,7 +273,7 @@ async def lists(path):
     cvsDataframe = pd.DataFrame(file_dict).transpose()
     resultExcelFile = pd.ExcelWriter(xls_filename)
     cvsDataframe.to_excel(resultExcelFile, index=False)
-    resultExcelFile.save()
+    resultExcelFile.close()
 
     gfile = drive.CreateFile({'parents': [{'id': path}]})
     gfile.SetContentFile(xls_filename)
