@@ -304,9 +304,26 @@ async def file_product():
     wb = openpyxl.load_workbook(generate_filename)
     sheet =  wb['Exam']
     max_row = 4
+
     for row in range(3, max_row):
-        for col in sheet.iter_cols(1, sheet.max_column):
-            print(col[row].value)
+        product_no = sheet.cell(row=row,column=1).value
+        brand = sheet.cell(row=row,column=2).value
+        categories_en = sheet.cell(row=row,column=4).value
+        categories_th = sheet.cell(row=row,column=5).value
+        booktype_en = sheet.cell(row=row,column=7).value
+        booktype_th = sheet.cell(row=row,column=8).value
+        parts_no = sheet.cell(row=row,column=10).value
+        model = sheet.cell(row=row,column=11).value
+        serial_no = sheet.cell(row=row,column=12).value
+        page_no = sheet.cell(row=row,column=13).value
+        file_type = sheet.cell(row=row,column=14).value
+        file_lang = sheet.cell(row=row,column=15).value
+        price = sheet.cell(row=row,column=17).value
+        sku = ''
+        file_id = ''
+        file_image = ''
+        val = (product_no,brand,categories_en,categories_th,booktype_en,booktype_th,parts_no,model,serial_no,page_no,file_type,file_lang,price,sku,file_id,file_image)
+        print(val)
     return {"message": "file product ok"}
 
 
