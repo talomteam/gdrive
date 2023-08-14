@@ -16,10 +16,18 @@ import os
 from os.path import join, dirname
 from dotenv import load_dotenv
 
-#from mysql.connector import Error
-#from mysql.connector import pooling
-#import mariadb
+
 from pymysqlpool.pool import Pool
+
+from woocommerce import API
+import openpyxl 
+
+wcapi = API(
+    url="https://https://www.shopmanual2you.com/",
+    consumer_key="ck_2b201992a3b7205b97b91ebaae9b74cffd0492b2",
+    consumer_secret="cs_43a4861af8b79e8d9f933c51fea31e1eb7b2af69",
+    version="wc/v3"
+)
 
 dotenv_path = join(dirname(__file__), '.env')
 load_dotenv(dotenv_path)
@@ -285,3 +293,27 @@ async def lists(path):
     gfile.Upload()
 
     return {"message": "Please check google drive file name %s" % (xls_filename)}
+
+@app.get("/v1/files/product")
+async def file_product():
+    file_id = '11OK7R6zqW7h7szSqI3F_gP4UVg-1mDps'
+    generate_filename = '%s.xlsx' % (file_id)
+    file = drive.CreateFile({'id': file_id})
+    file.GetContentFile(generate_filename)
+
+    wb = openpyxl.load_workbook(generate_filename)
+    sheet =  wb['Exam']
+    max_row = 4
+    for row in range(3, max_row):
+        for col in sheet.iter_cols(1, sheet.max_column):
+            print(col[row].value)
+    return {"message": "file product ok"}
+
+
+@app.post("/v1/products")
+async def add_product(path):
+    pass
+
+@app.get("/v1/categories")
+async def get_categories(path):
+    pass
