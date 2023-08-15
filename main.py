@@ -327,12 +327,14 @@ async def file_product():
         sku = 'S2Y-%s%s-%s%s-%s'%(brands[brand.upper()],categories[categories_en.upper()],booktypes[booktype_en.upper()],languages[file_lang.upper()],product_no)
 
         file_id = (sheet.cell(row=row,column=23).value).split("/")[-2]
-        images = (sheet.cell(row=row,column=24).value).split(",")[-2]
+        images = (sheet.cell(row=row,column=24).value).split(",")
         file_image = list()
         for image in images:
-            file_image.append(image.split("/")[-2])
+            if (image.strip() != ""):
+                file_image.append(image.split("/")[-2])
 
-        val = (product_no,brand,categories_en,categories_th,booktype_en,booktype_th,parts_no,model,serial_no,page_no,file_type,file_lang,price,sku,file_id,','.join(file_image))
+
+        val = (product_no,brand.upper(),categories_en.upper(),categories_th,booktype_en.upper(),booktype_th,parts_no,model,serial_no,page_no,file_type,file_lang.upper(),price,sku,file_id,','.join(file_image))
         print(val)
     return {"message": "file product ok"}
 
