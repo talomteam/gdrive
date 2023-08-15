@@ -52,6 +52,11 @@ db_name = os.environ.get("DB_NAME")
 
 fernet = Fernet(key)
 
+brands = {}
+categories = {}
+booktypes = {}
+languages = {}
+
 try:
     #connection_pool =  mariadb.ConnectionPool(pool_name="pynative_pool",
     #                                              pool_size=5,
@@ -320,17 +325,52 @@ async def file_product():
         file_lang = sheet.cell(row=row,column=15).value
         price = sheet.cell(row=row,column=17).value
         sku = ''
-        file_id = ''
-        file_image = ''
-        val = (product_no,brand,categories_en,categories_th,booktype_en,booktype_th,parts_no,model,serial_no,page_no,file_type,file_lang,price,sku,file_id,file_image)
+
+        file_id = (sheet.cell(row=row,column=23).value).split("/")[-2]
+        images = (sheet.cell(row=row,column=24).value).split("/")[-2]
+        file_image = list()
+        for image in images:
+            file_image.append( image.split("/")[-2])
+
+        val = (product_no,brand,categories_en,categories_th,booktype_en,booktype_th,parts_no,model,serial_no,page_no,file_type,file_lang,price,sku,file_id,','.join(file_image))
         print(val)
     return {"message": "file product ok"}
 
 
-@app.post("/v1/products")
-async def add_product(path):
-    pass
+@app.post("/v1/indexes")
+async def add_index():
+    try:
+        cursor = connection_db.cursor()
+        sql = "SELECT * FROM brands"
+        cursor.execute(sql)
+        result_brands = cursor.fetchall()
+        for brand in result_brands:
+            brands[brand['name']]= brand['code']
 
-@app.get("/v1/categories")
-async def get_categories(path):
-    pass
+        sql = "SELECT * FROM categories"
+        cursor.execute(sql)
+        result_categories = cursor.fetchall()
+        for category in result_categories:
+            categories[category['name']]= category['code']
+
+        sql = "SELECT * FROM book_types"
+        cursor.execute(sql)
+        result_booktypes = cursor.fetchall()
+        for booktype in result_booktypes:
+            booktypes[booktype['name']]= booktype['code']
+
+        sql = "SELECT * FROM languages"
+        cursor.execute(sql)
+        result_languages = cursor.fetchall()
+        for language in result_languages:
+            languages[booktype['name']]= language['code']
+
+        print (brands)
+        print (categories)
+        print (booktypes)
+        print (languages)
+
+    except:
+        pass
+        
+
