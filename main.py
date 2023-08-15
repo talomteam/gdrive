@@ -324,7 +324,7 @@ async def file_product():
         file_type = sheet.cell(row=row,column=14).value
         file_lang = sheet.cell(row=row,column=15).value
         price = sheet.cell(row=row,column=17).value
-        sku = 'S2Y-%s%s-%s%s-%s'%(brands[brand],categories[categories_en],booktypes[booktype_en],languages[file_lang],product_no)
+        sku = 'S2Y-%s%s-%s%s-%s'%(brands[brand.upper()],categories[categories_en.upper()],booktypes[booktype_en.upper()],languages[file_lang.upper()],product_no)
 
         file_id = (sheet.cell(row=row,column=23).value).split("/")[-2]
         images = (sheet.cell(row=row,column=24).value).split("/")[-2]
@@ -345,25 +345,25 @@ async def add_index():
         cursor.execute(sql)
         result_brands = cursor.fetchall()
         for brand in result_brands:
-            brands[brand['name']]= brand['code']
+            brands[brand['name'].upper()]= brand['code']
 
         sql = "SELECT * FROM categories"
         cursor.execute(sql)
         result_categories = cursor.fetchall()
         for category in result_categories:
-            categories[category['name']]= category['code']
+            categories[category['name'].upper()]= category['code']
 
         sql = "SELECT * FROM book_types"
         cursor.execute(sql)
         result_booktypes = cursor.fetchall()
         for booktype in result_booktypes:
-            booktypes[booktype['name']]= booktype['code']
+            booktypes[booktype['name'].upper()]= booktype['code']
 
         sql = "SELECT * FROM languages"
         cursor.execute(sql)
         result_languages = cursor.fetchall()
         for language in result_languages:
-            languages[language['name']]= language['code']
+            languages[language['name'].upper()]= language['code']
 
         print (brands)
         print (categories)
