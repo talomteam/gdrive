@@ -324,7 +324,7 @@ async def file_product():
         file_type = sheet.cell(row=row,column=14).value
         file_lang = sheet.cell(row=row,column=15).value
         price = sheet.cell(row=row,column=17).value
-        sku = ''
+        sku = 'S2Y-%s%s-%s%s-%s'%(brands[brand],categories[categories_en],booktypes[booktype_en],languages[file_lang],product_no)
 
         file_id = (sheet.cell(row=row,column=23).value).split("/")[-2]
         images = (sheet.cell(row=row,column=24).value).split("/")[-2]
