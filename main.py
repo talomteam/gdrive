@@ -363,7 +363,7 @@ async def add_index():
         cursor.execute(sql)
         result_languages = cursor.fetchall()
         for language in result_languages:
-            languages[booktype['name']]= language['code']
+            languages[language['name']]= language['code']
 
         print (brands)
         print (categories)
