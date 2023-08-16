@@ -6,20 +6,16 @@ from starlette.exceptions import HTTPException
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import StreamingResponse
 from cryptography.fernet import Fernet
-
 from PyPDF2 import PdfReader, PdfWriter
 from os.path import exists
-import csv
-import pandas as pd
-
-import os
 from os.path import join, dirname
 from dotenv import load_dotenv
-
-
 from pymysqlpool.pool import Pool
-
 from woocommerce import API
+
+import csv
+import pandas as pd
+import os
 import openpyxl 
 
 wcapi = API(
@@ -57,41 +53,53 @@ categories = {}
 booktypes = {}
 languages = {}
 
-try:
-    #connection_pool =  mariadb.ConnectionPool(pool_name="pynative_pool",
-    #                                              pool_size=5,
-    #                                              pool_reset_connection=True,
-    #                                              host=db_host,
-    #                                              database=db_name,
-    #                                              user=db_user,
-    #                                              password=db_password,
-    #                                              pool_validation_interval=250)
-    pool = Pool(host=db_host, port=3306, user=db_user, password=db_password, db=db_name,autocommit=True,ping_check=True)
-    #print("Printing connection pool properties ")
-    
-    #print("Connection Pool Name - ", connection_pool.pool_name)
-    #print("Connection Pool Size - ", connection_pool.pool_size)
-
-    # Get connection object from a pool
-    connection_db = pool.get_conn()
-
-except :
-    print("Error while connecting to MySQL using Connection pool ")
-
 
 def getfile(file_id):
     generate_filename = 'downloads/%s.pdf' % (file_id)
     file = drive.CreateFile({'id': file_id})
     file.GetContentFile(generate_filename)
 
-
 def encryptcp(fileb64):
     return fernet.encrypt(fileb64.encode()).decode()
-
 
 def decryptcp(fileb64):
     return fernet.decrypt(fileb64.encode()).decode()
 
+def getIndexes():
+    try:
+        cursor = connection_db.cursor()
+        sql = "SELECT * FROM brands"
+        cursor.execute(sql)
+        result_brands = cursor.fetchall()
+        for brand in result_brands:
+            brands[brand['name'].upper()]= brand['code']
+
+        sql = "SELECT * FROM categories"
+        cursor.execute(sql)
+        result_categories = cursor.fetchall()
+        for category in result_categories:
+            categories[category['name'].upper()]= category['code']
+
+        sql = "SELECT * FROM book_types"
+        cursor.execute(sql)
+        result_booktypes = cursor.fetchall()
+        for booktype in result_booktypes:
+            booktypes[booktype['name'].upper()]= booktype['code']
+
+        sql = "SELECT * FROM languages"
+        cursor.execute(sql)
+        result_languages = cursor.fetchall()
+        for language in result_languages:
+            languages[language['name'].upper()]= language['code']
+    except:
+        print("connection db problem")
+
+try:
+    pool = Pool(host=db_host, port=3306, user=db_user, password=db_password, db=db_name,autocommit=True,ping_check=True)
+    connection_db = pool.get_conn()
+    getIndexes()
+except :
+    print("Error while connecting to MySQL using Connection pool ")
 
 @app.get("/download/{fileb64}")
 async def download(fileb64):
@@ -113,7 +121,6 @@ async def download(fileb64):
 
     except:
         raise HTTPException(status_code=404, detail="Item not found")
-
 
 @app.get("/preview/{fileb64}")
 async def preview(fileb64,start: int = 1, end: int = 5 ):
@@ -222,7 +229,6 @@ async def heartbeat(path):
         return {"message":"connected ok"}
     except:
         raise HTTPException(status_code=503, detail="Connect error")
-
 
 @app.get("/lists/{path}")
 async def lists(path):
@@ -333,46 +339,21 @@ async def file_product():
             if (image.strip() != ""):
                 file_image.append(image.split("/")[-2])
 
-
         val = (product_no,brand.upper(),categories_en.upper(),categories_th,booktype_en.upper(),booktype_th,parts_no,model,serial_no,page_no,file_type,file_lang.upper(),price,sku,file_id,','.join(file_image))
         print(val)
+        cursor = connection_db.cursor()
+        sql = "INSERT INTO products (no,brand,categories_en,categories_th,booktype_en,booktype_th,parts_no,model,serial_no,page_no,file_type,file_lang,price,sku,file_id) value (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%d,%s,%s,)"
+        cursor.execute(sql,val)
+        connection_db.commit()
     return {"message": "file product ok"}
 
 
 @app.post("/v1/indexes")
 async def add_index():
-    try:
-        cursor = connection_db.cursor()
-        sql = "SELECT * FROM brands"
-        cursor.execute(sql)
-        result_brands = cursor.fetchall()
-        for brand in result_brands:
-            brands[brand['name'].upper()]= brand['code']
-
-        sql = "SELECT * FROM categories"
-        cursor.execute(sql)
-        result_categories = cursor.fetchall()
-        for category in result_categories:
-            categories[category['name'].upper()]= category['code']
-
-        sql = "SELECT * FROM book_types"
-        cursor.execute(sql)
-        result_booktypes = cursor.fetchall()
-        for booktype in result_booktypes:
-            booktypes[booktype['name'].upper()]= booktype['code']
-
-        sql = "SELECT * FROM languages"
-        cursor.execute(sql)
-        result_languages = cursor.fetchall()
-        for language in result_languages:
-            languages[language['name'].upper()]= language['code']
-
-        print (brands)
-        print (categories)
-        print (booktypes)
-        print (languages)
-
-    except:
-        pass
-        
+    getIndexes()
+    print (brands)
+    print (categories)
+    print (booktypes)
+    print (languages)
+    return {"message": "indexes is ok"}
 
