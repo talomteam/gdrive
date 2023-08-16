@@ -342,7 +342,7 @@ async def file_product():
         val = (product_no,brand.upper(),categories_en.upper(),categories_th,booktype_en.upper(),booktype_th,parts_no,model,serial_no,str(page_no),file_type,file_lang.upper(),price,sku,file_id,','.join(file_image))
         print(val)
         cursor = connection_db.cursor()
-        sql = "INSERT INTO products (no,brand,categories_en,categories_th,booktype_en,booktype_th,parts_no,model,serial_no,page_no,file_type,file_lang,price,sku,file_id) value (%s,%s,%s,%s,%s,%s,%s,%s,%s,%d,%s,%s,%d,%s,%s,)"
+        sql = "INSERT INTO products (no,brand,categories_en,categories_th,booktype_en,booktype_th,parts_no,model,serial_no,page_no,file_type,file_lang,price,sku,file_id) value (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%d,%s,%s)"
         cursor.execute(sql,val)
         connection_db.commit()
     return {"message": "file product ok"}
