@@ -339,7 +339,7 @@ async def file_product():
             if (image.strip() != ""):
                 file_image.append(image.split("/")[-2])
 
-        val = (product_no,brand.upper(),categories_en.upper(),categories_th,booktype_en.upper(),booktype_th,parts_no,model,serial_no,page_no,file_type,file_lang.upper(),price,sku,file_id,','.join(file_image))
+        val = (product_no,brand.upper(),categories_en.upper(),categories_th,booktype_en.upper(),booktype_th,parts_no,model,serial_no,str(page_no),file_type,file_lang.upper(),price,sku,file_id,','.join(file_image))
         print(val)
         cursor = connection_db.cursor()
         sql = "INSERT INTO products (no,brand,categories_en,categories_th,booktype_en,booktype_th,parts_no,model,serial_no,page_no,file_type,file_lang,price,sku,file_id) value (%s,%s,%s,%s,%s,%s,%s,%s,%s,%d,%s,%s,%d,%s,%s,)"
