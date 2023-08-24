@@ -11,6 +11,7 @@ from os.path import exists
 from os.path import join, dirname
 from dotenv import load_dotenv
 from pymysqlpool.pool import Pool
+import pymysql.cursors
 from woocommerce import API
 
 import csv
@@ -375,7 +376,7 @@ def product_update(product):
         #if not exist new record
             #create and call api
 
-    cursor = connection_db.cursor(dictionary=True)
+    cursor = connection_db.cursor(pymysql.cursors.DictCursor)
     sql = "select * from products where no=%s Limit 1"
     val = (product["no"])
     cursor.execute(sql,val)
