@@ -379,7 +379,8 @@ def product_update(product):
     sql = "select * from products where no=%s Limit 1"
     val = (product["no"])
     cursor.execute(sql,val)
-    result = cursor.fetchone()
+    result = dict(zip(cursor.column_names, cursor.fetchone()))
+    print (result)
     row_count = cursor.rowcount
     if row_count <= 0:
         val = (product["no"],product["brand"].upper(),product["categories_en"].upper(),product["categories_th"],product["booktype_en"].upper(),product["booktype_th"],product["parts_no"],product["model"],product["serial_no"],str(product["page_no"]),product["file_type"],product["file_lang"].upper(),product["price"],product["sku"],product["file_download_id"],','.join(product["file_image"]),product["price2"])
@@ -393,6 +394,7 @@ def product_update(product):
         for k,y in product:
             if checkValue(y,result[k]) == False:
                 columns.append(k)
+
         if len(columns) == 0 :
             val = []
             query = "update products set "

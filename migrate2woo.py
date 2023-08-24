@@ -55,7 +55,7 @@ def addProducts(product):
 def updateProduct(product):
     pass    
 
-def updateVariation (options,productId)
+def updateVariation (options,productId):
     pass
     
 def addVariation (options,productId):
