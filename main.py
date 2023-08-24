@@ -392,7 +392,7 @@ def product_update(product):
         connection_db.commit()
     else: 
         columns = []
-        for k,y in product:
+        for k,y in product.items():
             print (k,y)
             if checkValue(y,row[k]) == False:
                 columns.append(k)
