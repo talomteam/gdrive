@@ -335,7 +335,7 @@ async def file_product():
         product["parts_no"] = sheet.cell(row=row,column=10).value
         product["model"] = sheet.cell(row=row,column=11).value
         product["serial_no"] = sheet.cell(row=row,column=12).value
-        product["page_no"] = str(sheet.cell(row=row,column=13).value)
+        product["page_no"] = int(sheet.cell(row=row,column=13).value)
         product["file_type"] = sheet.cell(row=row,column=14).value
         product["file_lang"] = sheet.cell(row=row,column=15).value.upper()
         product["price"] = sheet.cell(row=row,column=17).value
