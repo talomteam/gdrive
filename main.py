@@ -376,13 +376,34 @@ def product_update(product):
         #if not exist new record
             #create and call api
 
-    cursor = connection_db.cursor(pymysql.cursors.DictCursor)
+    cursor = connection_db.cursor()
     sql = "select * from products where no=%s Limit 1"
     val = (product["no"])
     cursor.execute(sql,val)
-    result =  cursor.fetchone()
-    print (result)
+    row =  cursor.fetchone()
     row_count = cursor.rowcount
+    result = {}
+    if row_count > 0:
+        result["id"] = row[0]
+        result["no"] = row[1]
+        result["brand"] = row[2]
+        result["categories_en"] = row[3]
+        result["categories_th"] = row[4]
+        result["booktype_en"] = row[5]
+        result["booktype_th"] = row[6]
+        result["parts_no"] = row[7]
+        result["model"] = row[8]
+        result["serial_no"] = row[9]
+        result["page_no"] = row[10]
+        result["file_type"] = row[11]
+        result["file_lang"] = row[12]
+        result["price"] = row[13]
+        result["price2"] = row[14]
+        result["sku"] = row[15]
+        result["file_download_id"] = row[16]
+        result["images"] = row[17]
+        result["file_image"] = row[18]
+
     if row_count <= 0:
         val = (product["no"],product["brand"].upper(),product["categories_en"].upper(),product["categories_th"],product["booktype_en"].upper(),product["booktype_th"],product["parts_no"],product["model"],product["serial_no"],str(product["page_no"]),product["file_type"],product["file_lang"].upper(),product["price"],product["sku"],product["file_download_id"],','.join(product["file_image"]),product["price2"])
         print(val)
