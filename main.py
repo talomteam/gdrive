@@ -388,6 +388,9 @@ def product_update(product):
         columns = []
         for k,y in product.items():
             print (k,y)
+            if type(y) is list:
+                y = ','.join(y)
+
             if checkValue(y,row[k]) == False:
                 columns.append(k)
 
