@@ -369,13 +369,7 @@ def checkValue(origin,word):
     return False
 
 def product_update(product):
-    #check record
-        #if exist update
-            #check column exist update
-                #if exist column and call api
-        #if not exist new record
-            #create and call api
-
+    print (product)
     cursor = connection_db.cursor()
     sql = "select * from products where no=%s Limit 1"
     val = (product["no"])
@@ -398,6 +392,8 @@ def product_update(product):
                 columns.append(k)
 
         if len(columns) == 0 :
+            print ("record update")
+
             val = []
             query = "update products set "
             field = ""
@@ -406,6 +402,7 @@ def product_update(product):
                 val.append(product[column])
 
             sql = query +  field[0:-1]+ " where no="+product["no"]
+            print(sql)
             cursor.execute(sql,val)
             connection_db.commit()    
         
