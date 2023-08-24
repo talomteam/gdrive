@@ -391,7 +391,7 @@ def product_update(product):
             if checkValue(y,row[k]) == False:
                 columns.append(k)
 
-        if len(columns) == 0 :
+        if len(columns) > 0 :
             print ("record update")
 
             val = []
