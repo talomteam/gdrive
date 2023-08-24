@@ -339,7 +339,7 @@ async def file_product():
         product["file_lang"] = sheet.cell(row=row,column=15).value
         product["price"] = sheet.cell(row=row,column=17).value
         product["price2"] = sheet.cell(row=row,column=18).value
-        product["sku"] = 'S2Y-%s%s-%s%s-%s'%(brands[product["brand"].upper()],categories[product["categories_en"].upper()],booktypes[product["booktype_en"].upper()],languages[product["file_lang"].upper()],product["product_no"])
+        product["sku"] = 'S2Y-%s%s-%s%s-%s'%(brands[product["brand"].upper()],categories[product["categories_en"].upper()],booktypes[product["booktype_en"].upper()],languages[product["file_lang"].upper()],product["no"])
 
         product["file_download_id"] = (sheet.cell(row=row,column=24).value).split("/")[-2]
         product["images"] = (sheet.cell(row=row,column=25).value).split(",")
