@@ -380,7 +380,7 @@ def product_update(product):
     val = (product["no"])
     cursor.execute(sql,val)
     result = cursor.fetchone()
-    row_count = cursor.rowcount()
+    row_count = cursor.rowcount
     if row_count <= 0:
         val = (product["no"],product["brand"].upper(),product["categories_en"].upper(),product["categories_th"],product["booktype_en"].upper(),product["booktype_th"],product["parts_no"],product["model"],product["serial_no"],str(product["page_no"]),product["file_type"],product["file_lang"].upper(),product["price"],product["sku"],product["file_id"],','.join(product["file_image"]),product["price2"])
         print(val)
