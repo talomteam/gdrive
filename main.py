@@ -387,7 +387,7 @@ def product_update(product):
         val = (product["no"],product["brand"].upper(),product["categories_en"].upper(),product["categories_th"],product["booktype_en"].upper(),product["booktype_th"],product["parts_no"],product["model"],product["serial_no"],str(product["page_no"]),product["file_type"],product["file_lang"].upper(),product["price"],product["sku"],product["file_download_id"],','.join(product["file_image"]),product["price2"])
         print(val)
         cursor = connection_db.cursor()
-        sql = "INSERT INTO products (no,brand,categories_en,categories_th,booktype_en,booktype_th,part_no,model,serial_no,page_no,file_type,file_lang,price,sku,file_download_id,images,price2) value (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+        sql = "INSERT INTO products (no,brand,categories_en,categories_th,booktype_en,booktype_th,parts_no,model,serial_no,page_no,file_type,file_lang,price,sku,file_download_id,images,price2) value (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
         cursor.execute(sql,val)
         connection_db.commit()
     else: 
