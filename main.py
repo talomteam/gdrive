@@ -343,9 +343,9 @@ async def file_product():
         product["sku"] = 'S2Y-%s%s-%s%s-%s'%(brands[product["brand"].upper()],categories[product["categories_en"].upper()],booktypes[product["booktype_en"].upper()],languages[product["file_lang"].upper()],product["no"])
 
         product["file_download_id"] = (sheet.cell(row=row,column=24).value).split("/")[-2]
-        product["images"] = (sheet.cell(row=row,column=25).value).split(",")
+        images = (sheet.cell(row=row,column=25).value).split(",")
         product["file_image"] = list()
-        for image in product["images"]:
+        for image in images:
             if (image.strip() != ""):
                 product["file_image"].append(image.split("/")[-2])
                 getimage(image.split("/")[-2])
