@@ -393,8 +393,8 @@ def product_update(product):
     else: 
         columns = []
         for k,y in product:
+            print (k,y)
             if checkValue(y,row[k]) == False:
-                print (k)
                 columns.append(k)
 
         if len(columns) == 0 :
