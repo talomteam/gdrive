@@ -59,6 +59,13 @@ def getfile(file_id):
     file = drive.CreateFile({'id': file_id})
     file.GetContentFile(generate_filename)
 
+def getimage(file_id):
+    generate_filename = 'images/%s.jpg' % (file_id)
+    file_exists = exists(generate_filename)
+    if not file_exists :
+        file = drive.CreateFile({'id': file_id})
+        file.GetContentFile(generate_filename)
+
 def encryptcp(fileb64):
     return fernet.encrypt(fileb64.encode()).decode()
 
@@ -317,34 +324,32 @@ async def file_product():
     max_row = 4
 
     for row in range(3, max_row):
-        product_no = sheet.cell(row=row,column=1).value
-        brand = sheet.cell(row=row,column=2).value
-        categories_en = sheet.cell(row=row,column=4).value
-        categories_th = sheet.cell(row=row,column=5).value
-        booktype_en = sheet.cell(row=row,column=7).value
-        booktype_th = sheet.cell(row=row,column=8).value
-        parts_no = sheet.cell(row=row,column=10).value
-        model = sheet.cell(row=row,column=11).value
-        serial_no = sheet.cell(row=row,column=12).value
-        page_no = sheet.cell(row=row,column=13).value
-        file_type = sheet.cell(row=row,column=14).value
-        file_lang = sheet.cell(row=row,column=15).value
-        price = sheet.cell(row=row,column=17).value
-        sku = 'S2Y-%s%s-%s%s-%s'%(brands[brand.upper()],categories[categories_en.upper()],booktypes[booktype_en.upper()],languages[file_lang.upper()],product_no)
+        product = {}
+        product["no"] = sheet.cell(row=row,column=1).value
+        product["brand"] = sheet.cell(row=row,column=2).value
+        product["categories_en"] = sheet.cell(row=row,column=4).value
+        product["categories_th"] = sheet.cell(row=row,column=5).value
+        product["booktype_en"] = sheet.cell(row=row,column=7).value
+        product["booktype_th"] = sheet.cell(row=row,column=8).value
+        product["parts_no"] = sheet.cell(row=row,column=10).value
+        product["model"] = sheet.cell(row=row,column=11).value
+        product["serial_no"] = sheet.cell(row=row,column=12).value
+        product["page_no"] = sheet.cell(row=row,column=13).value
+        product["file_type"] = sheet.cell(row=row,column=14).value
+        product["file_lang"] = sheet.cell(row=row,column=15).value
+        product["price"] = sheet.cell(row=row,column=17).value
+        product["price2"] = sheet.cell(row=row,column=18).value
+        product["sku"] = 'S2Y-%s%s-%s%s-%s'%(brands[product["brand"].upper()],categories[product["categories_en"].upper()],booktypes[product["booktype_en"].upper()],languages[product["file_lang"].upper()],product["product_no"])
 
-        file_id = (sheet.cell(row=row,column=23).value).split("/")[-2]
-        images = (sheet.cell(row=row,column=24).value).split(",")
-        file_image = list()
-        for image in images:
+        product["file_download_id"] = (sheet.cell(row=row,column=24).value).split("/")[-2]
+        product["images"] = (sheet.cell(row=row,column=25).value).split(",")
+        product["file_image"] = list()
+        for image in product["images"]:
             if (image.strip() != ""):
-                file_image.append(image.split("/")[-2])
+                product["file_image"].append(image.split("/")[-2])
+                getimage(image.split("/")[-2])
+        product_update(product)
 
-        val = (product_no,brand.upper(),categories_en.upper(),categories_th,booktype_en.upper(),booktype_th,parts_no,model,serial_no,str(page_no),file_type,file_lang.upper(),price,sku,file_id,','.join(file_image))
-        print(val)
-        cursor = connection_db.cursor()
-        sql = "INSERT INTO products (no,brand,categories_en,categories_th,booktype_en,booktype_th,part_no,model,serial_no,page_no,file_type,file_lang,price,sku,file_id,images) value (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-        cursor.execute(sql,val)
-        connection_db.commit()
     return {"message": "file product ok"}
 
 
@@ -357,3 +362,46 @@ async def add_index():
     print (languages)
     return {"message": "indexes is ok"}
 
+def checkValue(origin,word):
+    if origin == word :
+        return True
+    return False
+
+def product_update(product):
+    #check record
+        #if exist update
+            #check column exist update
+                #if exist column and call api
+        #if not exist new record
+            #create and call api
+
+    cursor = connection_db.cursor()
+    sql = "select * from products where no=%s Limit 1"
+    val = (product["no"])
+    cursor.execute(sql,val)
+    result = cursor.fetchone()
+    if len(result) <= 0:
+        val = (product["no"],product["brand"].upper(),product["categories_en"].upper(),product["categories_th"],product["booktype_en"].upper(),product["booktype_th"],product["parts_no"],product["model"],product["serial_no"],str(product["page_no"]),product["file_type"],product["file_lang"].upper(),product["price"],product["sku"],product["file_id"],','.join(product["file_image"]),product["price2"])
+        print(val)
+        cursor = connection_db.cursor()
+        sql = "INSERT INTO products (no,brand,categories_en,categories_th,booktype_en,booktype_th,part_no,model,serial_no,page_no,file_type,file_lang,price,sku,file_id,images,price2) value (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+        cursor.execute(sql,val)
+        connection_db.commit()
+    else: 
+        columns = []
+        for k,y in product:
+            if checkValue(y,result[k]) == False:
+                columns.append(k)
+        if len(columns) == 0 :
+            val = []
+            query = "update products set "
+            field = ""
+            for column in columns:
+                field += column+"=%s,"
+                val.append(product[column])
+
+            sql = query +  field[0:-1]+ " where no="+product["no"]
+            cursor.execute(sql,val)
+            connection_db.commit()    
+        
+    
