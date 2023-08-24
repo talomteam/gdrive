@@ -375,11 +375,11 @@ def product_update(product):
         #if not exist new record
             #create and call api
 
-    cursor = connection_db.cursor()
+    cursor = connection_db.cursor(dictionary=True)
     sql = "select * from products where no=%s Limit 1"
     val = (product["no"])
     cursor.execute(sql,val)
-    result = dict(zip(cursor.column_names, cursor.fetchone()))
+    result =  cursor.fetchone()
     print (result)
     row_count = cursor.rowcount
     if row_count <= 0:
