@@ -173,6 +173,12 @@ def addVariation (product,productIden,productIdth):
     result_h_th = wcapi.post("products/%s/variations"%(productIdth), data_h_th).json()
     result_s_th = wcapi.post("products/%s/variations"%(productIdth), data_s_th).json()
 
+    print("v h en id",result_h_en["id"] )
+    print("v s en id",result_s_en["id"] )
+
+    print("v h th id",result_h_th["id"] )
+    print("v s th id",result_s_th["id"] )
+
     #add ref db
     try:
         cursor = connection_db.cursor()
