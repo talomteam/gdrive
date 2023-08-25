@@ -70,6 +70,7 @@ def addProducts(product):
         "type": "variable",
         "description": ("Brand : %s <br/> Booktype: %s <br/> Model: %s <br/> Serial: %s <br/> Language: %s <br/> File type: %s <br/>Number of page: %s<br/>"%(product["brand"],product["booktype_en"],product["model"],product["serial_no"],product["file_lang"],product["file_type"],product["page_no"])),
         "short_description": ("Brand : %s <br/> Booktype: %s <br/> Model: %s <br/> Serial: %s <br/> Language: %s <br/> File type: %s <br/>Number of page: %s<br/>"%(product["brand"],product["booktype_en"],product["model"],product["serial_no"],product["file_lang"],product["file_type"],product["page_no"])),
+        "sku": product["sku"],
         "categories": [
             {
                 "id": 9
@@ -86,7 +87,9 @@ def addProducts(product):
                 "variation": True,
                 "options": [
                     "Hard copy",
-                    "Soft file"
+                    "Soft file",
+                    "รูปแบบไฟล์",
+                    "รูปเล่มหนังสือจริง"
                 ]
             }
         ],
@@ -156,7 +159,7 @@ def addVariation (product,productIden,productIdth):
         "attributes": [
             {
                 "id": 4,
-                "option": "Hard copy"
+                "option": "รูปเล่มหนังสือจริง"
             }
         ]
     }
@@ -166,7 +169,7 @@ def addVariation (product,productIden,productIdth):
         "attributes": [
             {
                 "id": 4,
-                "option": "Soft file"
+                "option": "รูปแบบไฟล์"
             }
         ]
     }
