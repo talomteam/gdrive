@@ -103,10 +103,12 @@ def addProducts(product):
     print (data_th)
     result_en = wcapi.post("products", data_en).json()
     result_th = wcapi.post("products", data_th).json()
+    print("product en id",result_en["id"] )
+    print("product th id",result_en["id"] )
     #add ref db
     try:
         cursor = connection_db.cursor()
-        sql = "INSERT INTO woo_products (product_on,woo_product_en_id,woo_product_th_id,) values (%s,%s,%s)"
+        sql = "INSERT INTO woo_products (product_on,woo_product_en_id,woo_product_th_id) values (%s,%s,%s)"
         val = (product["no"],result_en["id"],result_th["id"])
         cursor.execute(sql,val)
         connection_db.commit()
