@@ -34,6 +34,7 @@ load_dotenv(dotenv_path)
 app = FastAPI()
 
 app.mount("/previews", StaticFiles(directory="previews"), name="previews")
+app.mount("/gimages", StaticFiles(directory="images"), name="images")
 
 gauth = GoogleAuth()
 gauth.CommandLineAuth()

@@ -1,4 +1,8 @@
 from woocommerce import API
+import os
+from pymysqlpool.pool import Pool
+import pymysql.cursors
+
 wcapi = API(
     url="https://www.shopmanual2you.com/",
     consumer_key="ck_2b201992a3b7205b97b91ebaae9b74cffd0492b2",
@@ -6,6 +10,16 @@ wcapi = API(
     version="wc/v3",
     timeout=20
 )
+db_host = os.environ.get("DB_HOST")
+db_user = os.environ.get("DB_USER")
+db_password = os.environ.get("DB_PASSWORD")
+db_name = os.environ.get("DB_NAME")
+
+try:
+    pool = Pool(host=db_host, port=3306, user=db_user, password=db_password, db=db_name,autocommit=True,ping_check=True,cursorclass=pymysql.cursors.DictCursor)
+    connection_db = pool.get_conn()
+except :
+    print("Error while connecting to MySQL using Connection pool ")
 
 ## create 
 
@@ -59,10 +73,6 @@ def addProducts(product):
         "images": file_images
         }
     print (data_en)
-    #result = wcapi.post("products", data).json()
-    #print(result)
-    #print(result["id"])
-    #addVariation(product,result["id"])
     
     ## create product th
     data_th = {
@@ -93,18 +103,28 @@ def addProducts(product):
         "default_attributes": [
             {
                 "id": 4,
-                "option": "Hard copy"
+                "option": "Soft file"
             },
             
         ],
-        "lang":"en",
+        "lang":"th",
         "images": file_images
         }
     print (data_th)
-    #result = wcapi.post("products", data).json()
-    #print(result)
-    #print(result["id"])
-    #addVariation(product,result["id"])
+    result_en = wcapi.post("products", data_en).json()
+    result_th = wcapi.post("products", data_th).json()
+    #add ref db
+    try:
+        cursor = connection_db.cursor()
+        sql = "INSERT INTO woo_products (product_on,woo_product_en_id,woo_product_th_id,) values (%s,%s,%s)"
+        val = (product["no"],result_en["id"],result_th["id"])
+        cursor.execute(sql,val)
+        connection_db.commit()
+    except:
+        print(sql)
+
+    addVariation(product,result_en["id"],result_th["id"])
+    
 
 def updateProduct(product):
     pass    
@@ -112,19 +132,63 @@ def updateProduct(product):
 def updateVariation (options,productId):
     pass
     
-def addVariation (options,productId):
-    data = options
-    result = wcapi.post("products/%s/variations"%(productId), data).json()
-    print (result)
-    print(result["id"])
-    return result["id"]
+def addVariation (product,productIden,productIdth):
 
-data = {
-    "regular_price": "100.00",
-    "attributes": [
-        {
-            "id": 4,
-            "option": "Hard copy"
-        }
-    ]
-}
+    ## create product variation en
+    data_h_en = {
+        "regular_price": product["price2"],
+        "attributes": [
+            {
+                "id": 4,
+                "option": "Hard copy"
+            }
+        ]
+    }
+    
+    data_s_en = {
+        "regular_price": product["price"],
+        "attributes": [
+            {
+                "id": 4,
+                "option": "Soft file"
+            }
+        ]
+    }
+    result_h_en = wcapi.post("products/%s/variations"%(productIden), data_h_en).json()
+    result_s_en = wcapi.post("products/%s/variations"%(productIden), data_s_en).json()
+
+    ## create product variation en
+    data_h_th = {
+        "regular_price": product["price2"],
+        "attributes": [
+            {
+                "id": 4,
+                "option": "Hard copy"
+            }
+        ]
+    }
+    
+    data_s_th = {
+        "regular_price": product["price"],
+        "attributes": [
+            {
+                "id": 4,
+                "option": "Soft file"
+            }
+        ]
+    }
+    result_h_th = wcapi.post("products/%s/variations"%(productIdth), data_h_th).json()
+    result_s_th = wcapi.post("products/%s/variations"%(productIdth), data_s_th).json()
+
+    #add ref db
+    try:
+        cursor = connection_db.cursor()
+        sql = "update woo_products set woo_variation_h_en=%s,woo_variation_s_en=%s,woo_variation_h_th=%s,woo_variation_s_th=%s where product_no=%s"
+        val = (result_h_en["id"],result_s_en["id"],result_h_th["id"],result_s_th["id"],product["no"])
+        cursor.execute(sql,val)
+        connection_db.commit()
+    except:
+        print(sql)
+
+
+
