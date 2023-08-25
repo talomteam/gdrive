@@ -19,6 +19,8 @@ import pandas as pd
 import os
 import openpyxl 
 
+import migrate2woo as woo
+
 wcapi = API(
     url="https://https://www.shopmanual2you.com/",
     consumer_key="ck_2b201992a3b7205b97b91ebaae9b74cffd0492b2",
@@ -384,6 +386,7 @@ def product_update(product):
         sql = "INSERT INTO products (no,brand,categories_en,categories_th,booktype_en,booktype_th,parts_no,model,serial_no,page_no,file_type,file_lang,price,sku,file_download_id,file_image,price2) value (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
         cursor.execute(sql,val)
         connection_db.commit()
+        woo.addProducts(product)
     else: 
         columns = []
         for k,y in product.items():
@@ -407,6 +410,7 @@ def product_update(product):
             sql = query +  field[0:-1]+ " where no="+product["no"]
             print(sql)
             cursor.execute(sql,val)
-            connection_db.commit()    
+            connection_db.commit()
+            woo.updateProduct(column,product,row)    
         
     

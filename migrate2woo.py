@@ -10,14 +10,24 @@ wcapi = API(
 ## create 
 
 attributes = 4
+baseUrl = "https://www.shopmanual2you.com/"
+pathImage = "gimages/"
 
 def addProducts(product):
-    data = {
-        "name": "Premium Quality-en",
+    #set images
+    
+    file_images = list()
+    for image in product["file_image"]:
+        srcImage = {}
+        srcImage["src"] = "%s%s%s.jpg"%(baseUrl,pathImage,product["file_iamge"][i])
+        file_images.append(srcImage)
+        
+    ## create product en
+    data_en = {
+        "name": ("%s %s %s %s"%(product["brand"],product["categories_en"],product["booktype_en"],product["model"])),
         "type": "variable",
-        "regular_price": "21.99",
-        "description": "Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est. Mauris placerat eleifend leo.",
-        "short_description": "Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.",
+        "description": ("Brand : %s <br/> Booktype: %s <br/> Model: %s <br/> Serial: %s <br/> Language: %s <br/> File type: %s <br/>Number of page: %s<br/>"%(product["brand"],product["categories_en"],product["booktype_en"],product["model"],product["parts_no"],product["file_lang"],product["file_type"],product["parts_no"])),
+        "short_description": ("Brand : %s <br/> Booktype: %s <br/> Model: %s <br/> Serial: %s <br/> Language: %s <br/> File type: %s <br/>Number of page: %s<br/>"%(product["brand"],product["categories_en"],product["booktype_en"],product["model"],product["parts_no"],product["file_lang"],product["file_type"],product["parts_no"])),
         "categories": [
             {
                 "id": 9
@@ -38,19 +48,63 @@ def addProducts(product):
                 ]
             }
         ],
-        "lang":"en",
-        "images": [
+        "default_attributes": [
             {
-                "src": "http://demo.woothemes.com/woocommerce/wp-content/uploads/sites/56/2013/06/T_2_front.jpg"
+                "id": 4,
+                "option": "Hard copy"
+            },
+            
+        ],
+        "lang":"en",
+        "images": file_images
+        }
+    print (data_en)
+    #result = wcapi.post("products", data).json()
+    #print(result)
+    #print(result["id"])
+    #addVariation(product,result["id"])
+    
+    ## create product th
+    data_th = {
+        "name": ("%s %s %s %s"%(product["brand"],product["categories_th"],product["booktype_th"],product["model"])),
+        "type": "variable",
+        "description": ("Brand : %s <br/> Booktype: %s <br/> Model: %s <br/> Serial: %s <br/> Language: %s <br/> File type: %s <br/>Number of page: %s<br/>"%(product["brand"],product["categories_th"],product["booktype_th"],product["model"],product["parts_no"],product["file_lang"],product["file_type"],product["parts_no"])),
+        "short_description": ("Brand : %s <br/> Booktype: %s <br/> Model: %s <br/> Serial: %s <br/> Language: %s <br/> File type: %s <br/>Number of page: %s<br/>"%(product["brand"],product["categories_th"],product["booktype_th"],product["model"],product["parts_no"],product["file_lang"],product["file_type"],product["parts_no"])),
+        "categories": [
+            {
+                "id": 9
             },
             {
-                "src": "http://demo.woothemes.com/woocommerce/wp-content/uploads/sites/56/2013/06/T_2_back.jpg"
+                "id": 14
             }
-            ]
+        ],
+        "attributes": [
+            {
+                "id": 4,
+                "position": 0,
+                "visible": False,
+                "variation": True,
+                "options": [
+                    "Hard copy",
+                    "Soft file"
+                ]
+            }
+        ],
+        "default_attributes": [
+            {
+                "id": 4,
+                "option": "Hard copy"
+            },
+            
+        ],
+        "lang":"en",
+        "images": file_images
         }
-    result = wcapi.post("products", data).json()
-    print(result)
-    print(result["id"])
+    print (data_th)
+    #result = wcapi.post("products", data).json()
+    #print(result)
+    #print(result["id"])
+    #addVariation(product,result["id"])
 
 def updateProduct(product):
     pass    
