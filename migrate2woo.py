@@ -110,8 +110,9 @@ def addProducts(product):
         val = (product["no"],result_en["id"],result_th["id"])
         cursor.execute(sql,val)
         connection_db.commit()
-    except:
-        print(sql)
+    except Exception as e:
+        print(e)
+        print(sql,val)
 
     addVariation(product,result_en["id"],result_th["id"])
     
@@ -177,8 +178,9 @@ def addVariation (product,productIden,productIdth):
         val = (result_h_en["id"],result_s_en["id"],result_h_th["id"],result_s_th["id"],product["no"])
         cursor.execute(sql,val)
         connection_db.commit()
-    except:
-        print(sql)
+    except Exception as e :
+        print(e)
+        print(sql,val)
 
 
 
