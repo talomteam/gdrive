@@ -104,7 +104,7 @@ def addProducts(product):
     result_en = wcapi.post("products", data_en).json()
     result_th = wcapi.post("products", data_th).json()
     print("product en id",result_en["id"] )
-    print("product th id",result_en["id"] )
+    print("product th id",result_th["id"] )
     #add ref db
     try:
         cursor = connection_db.cursor()
@@ -129,7 +129,7 @@ def addVariation (product,productIden,productIdth):
 
     ## create product variation en
     data_h_en = {
-        "regular_price": product["price2"],
+        "regular_price": str(product["price2"]),
         "attributes": [
             {
                 "id": 4,
@@ -139,7 +139,7 @@ def addVariation (product,productIden,productIdth):
     }
     
     data_s_en = {
-        "regular_price": product["price"],
+        "regular_price": str(product["price"]),
         "attributes": [
             {
                 "id": 4,
@@ -152,7 +152,7 @@ def addVariation (product,productIden,productIdth):
 
     ## create product variation en
     data_h_th = {
-        "regular_price": product["price2"],
+        "regular_price": str(product["price2"]),
         "attributes": [
             {
                 "id": 4,
@@ -162,7 +162,7 @@ def addVariation (product,productIden,productIdth):
     }
     
     data_s_th = {
-        "regular_price": product["price"],
+        "regular_price": str(product["price"]),
         "attributes": [
             {
                 "id": 4,
