@@ -34,7 +34,7 @@ load_dotenv(dotenv_path)
 app = FastAPI()
 
 app.mount("/previews", StaticFiles(directory="previews"), name="previews")
-app.mount("/gimages", StaticFiles(directory="images"), name="images")
+
 
 gauth = GoogleAuth()
 gauth.CommandLineAuth()
@@ -64,7 +64,7 @@ def getfile(file_id):
     file.GetContentFile(generate_filename)
 
 def getimage(file_id):
-    generate_filename = 'images/%s.jpg' % (file_id)
+    generate_filename = '/var/www/wordpress/gimages/%s.jpg' % (file_id)
     file_exists = exists(generate_filename)
     if not file_exists :
         file = drive.CreateFile({'id': file_id})
