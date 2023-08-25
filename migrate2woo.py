@@ -15,11 +15,9 @@ db_user = os.environ.get("DB_USER")
 db_password = os.environ.get("DB_PASSWORD")
 db_name = os.environ.get("DB_NAME")
 
-try:
-    pool = Pool(host=db_host, port=3306, user=db_user, password=db_password, db=db_name,autocommit=True,ping_check=True,cursorclass=pymysql.cursors.DictCursor)
-    connection_db = pool.get_conn()
-except :
-    print("Error while connecting to MySQL using Connection pool ")
+
+pool = Pool(host=db_host, port=3306, user=db_user, password=db_password, db=db_name,autocommit=True,ping_check=True,cursorclass=pymysql.cursors.DictCursor)
+connection_db = pool.get_conn()
 
 ## create 
 
