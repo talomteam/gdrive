@@ -15,11 +15,11 @@ pathImage = "gimages/"
 
 def addProducts(product):
     #set images
-    
+
     file_images = list()
     for image in product["file_image"]:
         srcImage = {}
-        srcImage["src"] = "%s%s%s.jpg"%(baseUrl,pathImage,product["file_iamge"][i])
+        srcImage["src"] = "%s%s%s.jpg"%(baseUrl,pathImage,image)
         file_images.append(srcImage)
         
     ## create product en
