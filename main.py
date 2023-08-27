@@ -388,6 +388,15 @@ def product_update(product):
         sql = "INSERT INTO products (no,brand,categories_en,categories_th,booktype_en,booktype_th,parts_no,model,serial_no,page_no,file_type,file_lang,price,sku,file_download_id,file_image,price2) value (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
         cursor.execute(sql,val)
         connection_db.commit()
+        preview = encryptcp("preview"+product['file_download_id'])
+        download = encryptcp("download"+product['file_download_id'])
+        pdfjs_template = '[pdfjs-viewer url= "https://{domain}z/gdrive/preview/{file_id}?start=1&end=4" viewer_width=100% viewer_height=800px fullscreen=true download=true print=true]'.format(
+                    domain=domain,file_id=preview)
+        download_template = 'https://{domain}/gdrive/download/{file_id}'.format(
+                    domain=domain,file_id=download)
+        product["download"] = download_template
+        product["preview"] = pdfjs_template
+
         woo.addProducts(product)
     else: 
         columns = []

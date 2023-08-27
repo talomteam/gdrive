@@ -31,7 +31,8 @@ def addProducts(product):
         "name": ("%s %s %s %s"%(product["brand"],product["categories_en"],product["booktype_en"],product["model"])),
         "type": "variable",
         "description": ("Brand : %s <br/> Booktype: %s <br/> Model: %s <br/> Serial: %s <br/> Language: %s <br/> File type: %s <br/>Number of page: %s<br/>"%(product["brand"],product["booktype_en"],product["model"],product["serial_no"],product["file_lang"],product["file_type"],product["page_no"])),
-        "short_description": ("Brand : %s <br/> Booktype: %s <br/> Model: %s <br/> Serial: %s <br/> Language: %s <br/> File type: %s <br/>Number of page: %s<br/>"%(product["brand"],product["booktype_en"],product["model"],product["serial_no"],product["file_lang"],product["file_type"],product["page_no"])),
+        "short_description": ("Brand : %s <br/> Booktype: %s <br/> Model: %s <br/> Serial: %s <br/> Language: %s <br/> File type: %s <br/>Number of page: %s<br/> Preview: <br>%s"%(product["brand"],product["booktype_en"],product["model"],product["serial_no"],product["file_lang"],product["file_type"],product["page_no"],product["preview"])),
+        "sku": product["sku"]+"-EN",
         "categories": [
             {
                 "id": 9
@@ -69,8 +70,8 @@ def addProducts(product):
         "name": ("%s %s %s %s"%(product["brand"],product["categories_th"],product["booktype_th"],product["model"])),
         "type": "variable",
         "description": ("Brand : %s <br/> Booktype: %s <br/> Model: %s <br/> Serial: %s <br/> Language: %s <br/> File type: %s <br/>Number of page: %s<br/>"%(product["brand"],product["booktype_en"],product["model"],product["serial_no"],product["file_lang"],product["file_type"],product["page_no"])),
-        "short_description": ("Brand : %s <br/> Booktype: %s <br/> Model: %s <br/> Serial: %s <br/> Language: %s <br/> File type: %s <br/>Number of page: %s<br/>"%(product["brand"],product["booktype_en"],product["model"],product["serial_no"],product["file_lang"],product["file_type"],product["page_no"])),
-        "sku": product["sku"],
+        "short_description": ("Brand : %s <br/> Booktype: %s <br/> Model: %s <br/> Serial: %s <br/> Language: %s <br/> File type: %s <br/>Number of page: %s<br/> preview:<br> %s"%(product["brand"],product["booktype_en"],product["model"],product["serial_no"],product["file_lang"],product["file_type"],product["page_no"],product["preview"])),
+        "sku": product["sku"]+"-TH",
         "categories": [
             {
                 "id": 9
@@ -86,8 +87,6 @@ def addProducts(product):
                 "visible": False,
                 "variation": True,
                 "options": [
-                    "Hard copy",
-                    "Soft file",
                     "รูปแบบไฟล์",
                     "รูปเล่มหนังสือจริง"
                 ]
@@ -96,7 +95,7 @@ def addProducts(product):
         "default_attributes": [
             {
                 "id": 4,
-                "option": "Soft file"
+                "option": "รูปแบบไฟล์"
             },
             
         ],
@@ -148,7 +147,13 @@ def addVariation (product,productIden,productIdth):
                 "id": 4,
                 "option": "Soft file"
             }
-        ]
+        ],
+        "downloads": [
+            {
+                "name": product["file_download_id"],
+                "file": product["download"]
+            }
+        ],
     }
     result_h_en = wcapi.post("products/%s/variations"%(productIden), data_h_en).json()
     result_s_en = wcapi.post("products/%s/variations"%(productIden), data_s_en).json()
@@ -170,6 +175,12 @@ def addVariation (product,productIden,productIdth):
             {
                 "id": 4,
                 "option": "รูปแบบไฟล์"
+            }
+        ],
+        "downloads": [
+            {
+                "name": product["file_download_id"],
+                "file": product["download"]
             }
         ]
     }
