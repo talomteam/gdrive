@@ -390,7 +390,7 @@ def product_update(product):
         connection_db.commit()
         preview = encryptcp("preview"+product['file_download_id'])
         download = encryptcp("download"+product['file_download_id'])
-        pdfjs_template = '[pdfjs-viewer url= "https://{domain}z/gdrive/preview/{file_id}?start=1&end=4" viewer_width=100% viewer_height=800px fullscreen=true download=true print=true]'.format(
+        pdfjs_template = '[pdfjs-viewer url= "https://{domain}/gdrive/preview/{file_id}?start=1%26end=4" viewer_width=100% viewer_height=800px fullscreen=true download=true print=true]'.format(
                     domain=domain,file_id=preview)
         download_template = 'https://{domain}/gdrive/download/{file_id}'.format(
                     domain=domain,file_id=download)
