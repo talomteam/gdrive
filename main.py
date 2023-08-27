@@ -134,7 +134,7 @@ async def download(fileb64):
     except:
         raise HTTPException(status_code=404, detail="Item not found")
 
-@app.get("/preview/{fileb64}/{start}/{end}")
+@app.get("/preview/{fileb64}")
 async def preview(fileb64,start: int = 1, end: int = 5 ):
     try:
         file_id = decryptcp(fileb64).split("preview")[1]
