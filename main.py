@@ -134,7 +134,7 @@ async def download(fileb64):
     except:
         raise HTTPException(status_code=404, detail="Item not found")
 
-@app.get("/preview/{fileb64}")
+@app.get("/preview/{fileb64}/{start}/{end}")
 async def preview(fileb64,start: int = 1, end: int = 5 ):
     try:
         file_id = decryptcp(fileb64).split("preview")[1]
@@ -282,7 +282,7 @@ async def lists(path):
             else:
                 preview_file_id = encryptcp("preview"+file1['id'])
                 download_file_id = encryptcp("download"+file1['id'])
-                pdfjs_template = '[pdfjs-viewer url= "https://{domain}z/gdrive/preview/{file_id}?start=1&end=4" viewer_width=100% viewer_height=800px fullscreen=true download=true print=true]'.format(
+                pdfjs_template = '[pdfjs-viewer url= "https://{domain}/gdrive/preview/{file_id}" viewer_width=100% viewer_height=800px fullscreen=true download=true print=true]'.format(
                     domain=domain,file_id=preview_file_id)
                 download_template = 'https://{domain}/gdrive/download/{file_id}'.format(
                     domain=domain,file_id=download_file_id)
@@ -390,7 +390,7 @@ def product_update(product):
         connection_db.commit()
         preview = encryptcp("preview"+product['file_download_id'])
         download = encryptcp("download"+product['file_download_id'])
-        pdfjs_template = '[pdfjs-viewer url= "https://{domain}/gdrive/preview/{file_id}?start=1%26end=4" viewer_width=100% viewer_height=800px fullscreen=true download=true print=true]'.format(
+        pdfjs_template = '[pdfjs-viewer url= "https://{domain}/gdrive/preview/{file_id}" viewer_width=100% viewer_height=800px fullscreen=true download=true print=true]'.format(
                     domain=domain,file_id=preview)
         download_template = 'https://{domain}/gdrive/download/{file_id}'.format(
                     domain=domain,file_id=download)
