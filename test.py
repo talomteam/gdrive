@@ -6,7 +6,7 @@ wcapi = API(
     version="wc/v3",
     timeout=20
 )
-data_h_en = {
+data= {
         "regular_price": "2500",
         "attributes": [
             {
@@ -16,14 +16,8 @@ data_h_en = {
         ]
     }
     
-data_s_en = {
-        "regular_price": "2000",
-        "attributes": [
-            {
-                "id": 4,
-                "option": "Soft file"
-            }
-        ]
-    }
-result_h_en = wcapi.post("products/5722/variations", data_h_en).json()
-print (result_h_en)
+
+result= wcapi.get("products/tags?page=2&per_page=100").json()
+for c in result:
+    print ("id:%s name:%s slug:%s"%(c['id'],c['name'],c['slug']))
+#print (result)

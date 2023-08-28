@@ -35,10 +35,18 @@ def addProducts(product):
         "sku": product["sku"]+"-EN",
         "categories": [
             {
-                "id": 9
+                "id": product["brands_ref"][product["brand"]]["ref"]
             },
             {
-                "id": 14
+                "id": product["categories_ref"][product["categories_en"]]["ref"]
+            }
+        ],
+        "tags":[
+            {
+                "id":product["brands_ref"][product["brand"]]["tag_ref"]
+            },
+            {
+                "id": product["brands_ref"][product["booktype_en"]]["tag_ref"]
             }
         ],
         "attributes": [
@@ -74,10 +82,18 @@ def addProducts(product):
         "sku": product["sku"]+"-TH",
         "categories": [
             {
-                "id": 9
+                "id": product["brands_ref"][product["brand"]]["ref_th"]
             },
             {
-                "id": 14
+                "id": product["categories_ref"][product["categories_en"]]["ref_th"]
+            }
+        ],
+        "tags":[
+            {
+                "id":product["brands_ref"][product["brand"]]["tag_ref_th"]
+            },
+            {
+                "id": product["booktype_ref"][product["booktype_en"]]["tag_ref_th"]
             }
         ],
         "attributes": [
@@ -152,7 +168,7 @@ def addVariation (product,productIden,productIdth):
         ],
         "downloads": [
             {
-                "name": product["file_download_id"],
+                "name": (product["brand"]+"-"+product["parts_no"]),
                 "file": product["download"]
             }
         ],
@@ -183,7 +199,7 @@ def addVariation (product,productIden,productIdth):
         ],
         "downloads": [
             {
-                "name": product["file_download_id"],
+                "name":  (product["brand"]+"-"+product["parts_no"]),
                 "file": product["download"]
             }
         ]

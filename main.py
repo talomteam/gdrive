@@ -83,13 +83,13 @@ def getIndexes():
         cursor.execute(sql)
         result_brands = cursor.fetchall()
         for brand in result_brands:
-            brands[brand['name'].upper()]= brand['code']
+            brands[brand['name'].upper()]= {"code":brand['code'],"en":brand["ref"],"th":brand["ref_th"],"tag_en":brand["tag_ref"],"tag_th":brand["tag_ref_th"]}
 
         sql = "SELECT * FROM categories"
         cursor.execute(sql)
         result_categories = cursor.fetchall()
         for category in result_categories:
-            categories[category['name'].upper()]= category['code']
+            categories[category['name'].upper()]= {"code":category['code'],"en":category["ref"],"th":category["ref_th"]}
 
         sql = "SELECT * FROM book_types"
         cursor.execute(sql)
@@ -344,7 +344,7 @@ async def file_product():
         product["file_lang"] = sheet.cell(row=row,column=15).value.upper()
         product["price"] = sheet.cell(row=row,column=17).value
         product["price2"] = sheet.cell(row=row,column=18).value
-        product["sku"] = 'S2Y-%s%s-%s%s-%s'%(brands[product["brand"]],categories[product["categories_en"]],booktypes[product["booktype_en"]],languages[product["file_lang"]],product["no"])
+        product["sku"] = 'S2Y-%s%s-%s%s-%s'%(brands[product["brand"]]["code"],categories[product["categories_en"]]["code"],booktypes[product["booktype_en"]],languages[product["file_lang"]],product["no"])
 
         product["file_download_id"] = (sheet.cell(row=row,column=24).value).split("/")[-2]
         images = (sheet.cell(row=row,column=25).value).split(",")
@@ -396,7 +396,9 @@ def product_update(product):
                     domain=domain,file_id=download)
         product["download"] = download_template
         product["preview"] = pdfjs_template
-
+        product["brands_ref"] = brands
+        product["categories_ref"] = categories
+        product["booktype_ref"] = booktypes
         woo.addProducts(product)
     else: 
         columns = []
