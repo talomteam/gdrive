@@ -95,7 +95,7 @@ def getIndexes():
         cursor.execute(sql)
         result_booktypes = cursor.fetchall()
         for booktype in result_booktypes:
-            booktypes[booktype['name'].upper()]= booktype['code']
+            booktypes[booktype['name'].upper()]= {"code":booktype['code'],"en":booktype['ref'],"th":booktype['ref_th']}
 
         sql = "SELECT * FROM languages"
         cursor.execute(sql)
