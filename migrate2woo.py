@@ -46,7 +46,7 @@ def addProducts(product):
                 "id": int(product["brands_ref"][product["brand"]]["tag_en"])
             },
             {
-                "id": int(product["booktype_ref"][product["booktype_en"]]["tag_en"])
+                "id": int(product["booktype_ref"][product["booktype_en"]]["en"])
             }
         ],
         "attributes": [
@@ -93,7 +93,7 @@ def addProducts(product):
                 "id":int(product["brands_ref"][product["brand"]]["tag_th"])
             },
             {
-                "id": int(product["booktype_ref"][product["booktype_en"]]["tag_th"])
+                "id": int(product["booktype_ref"][product["booktype_en"]]["th"])
             }
         ],
         "attributes": [
