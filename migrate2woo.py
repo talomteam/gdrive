@@ -35,18 +35,18 @@ def addProducts(product):
         "sku": product["sku"]+"-EN",
         "categories": [
             {
-                "id": product["brands_ref"][product["brand"]]["ref"]
+                "id": product["brands_ref"][product["brand"]]["en"]
             },
             {
-                "id": product["categories_ref"][product["categories_en"]]["ref"]
+                "id": product["categories_ref"][product["categories_en"]]["en"]
             }
         ],
         "tags":[
             {
-                "id":product["brands_ref"][product["brand"]]["tag_ref"]
+                "id":product["brands_ref"][product["brand"]]["tag_en"]
             },
             {
-                "id": product["brands_ref"][product["booktype_en"]]["tag_ref"]
+                "id": product["booktype_ref"][product["booktype_en"]]["tag_en"]
             }
         ],
         "attributes": [
@@ -82,18 +82,18 @@ def addProducts(product):
         "sku": product["sku"]+"-TH",
         "categories": [
             {
-                "id": product["brands_ref"][product["brand"]]["ref_th"]
+                "id": product["brands_ref"][product["brand"]]["th"]
             },
             {
-                "id": product["categories_ref"][product["categories_en"]]["ref_th"]
+                "id": product["categories_ref"][product["categories_en"]]["th"]
             }
         ],
         "tags":[
             {
-                "id":product["brands_ref"][product["brand"]]["tag_ref_th"]
+                "id":product["brands_ref"][product["brand"]]["tag_th"]
             },
             {
-                "id": product["booktype_ref"][product["booktype_en"]]["tag_ref_th"]
+                "id": product["booktype_ref"][product["booktype_en"]]["tag_th"]
             }
         ],
         "attributes": [
