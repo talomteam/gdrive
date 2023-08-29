@@ -116,6 +116,11 @@ def addProducts(product):
             
         ],
         "lang":"th",
+        "translations":[
+            {
+                "en": result_en["id"]
+            }
+        ],
         "images": file_images
         }
     print (data_th)
