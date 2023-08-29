@@ -73,6 +73,7 @@ def addProducts(product):
         }
     print (data_en)
     
+    result_en = wcapi.post("products", data_en).json()
     ## create product th
     data_th = {
         "name": ("%s %s %s %s"%(product["brand"],product["categories_th"],product["booktype_th"],product["model"])),
@@ -124,7 +125,7 @@ def addProducts(product):
         "images": file_images
         }
     print (data_th)
-    result_en = wcapi.post("products", data_en).json()
+    
     result_th = wcapi.post("products", data_th).json()
     print("product en id",result_en["id"] )
     print("product th id",result_th["id"] )
