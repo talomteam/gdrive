@@ -7,17 +7,14 @@ wcapi = API(
     timeout=20
 )
 data= {
-        "regular_price": "2500",
-        "attributes": [
-            {
-                "id": 4,
-                "option": "Hard copy"
+        "translations": {
+                "en":"5809"
             }
-        ]
+
     }
     
 
-result= wcapi.get("products/tags?page=2&per_page=100").json()
-for c in result:
-    print ("id:%s name:%s slug:%s"%(c['id'],c['name'],c['slug']))
-#print (result)
+result= wcapi.put("products/5811",data).json()
+#for c in result:
+#    print ("id:%s name:%s slug:%s"%(c['id'],c['name'],c['slug']))
+print (result)

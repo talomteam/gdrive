@@ -1,7 +1,7 @@
 from woocommerce import API
 import os
-from pymysqlpool.pool import Pool
-import pymysql.cursors
+import random
+import string
 
 wcapi = API(
     url="https://www.shopmanual2you.com/",
@@ -117,11 +117,6 @@ def addProducts(product):
             
         ],
         "lang":"th",
-        "translations":[
-            {
-                "en": result_en["id"]
-            }
-        ],
         "images": file_images
         }
     print (data_th)
@@ -139,9 +134,49 @@ def addProducts(product):
     except Exception as e:
         print(e)
         print(sql,val)
-
+    updateTranslations(result_en["id"],result_th["id"])
     addVariation(product,result_en["id"],result_th["id"])
     
+def updateTranslations(product_en_id,product_th_id):
+
+    translation = 'a:2:{s:2:"th";i:%s;s:2:"en";i:%s;}'%(product_th_id,product_en_id)
+    #en
+    en_prefix = "pll_74e"
+    en_random = ''.join(random.choices(string.ascii_lowercase + string.digits, k=10))
+    #insert wp_terms
+    cursor = connection_db.cursor()
+    sql = "INSERT INTO wordpress.wp_terms (name,slug,term_group) values (%s,%s,%s)"
+    val = (en_prefix+en_random,en_prefix+en_random,0)
+    cursor.execute(sql,val)
+    en_term_id = cursor.lastrowid
+    #insert wp_term_relationships
+    sql = "INSERT INTO wordpress.wp_term_relationships (object_id,term_taxonomy_id,term_order) values (%s,%s,%s)"
+    val = (product_en_id,en_term_id,0)
+    cursor.execute(sql,val)
+    #insert wp_term_taxonomy
+    sql = "INSERT INTO wordpress.wp_term_taxonomy (term_taxonomy_id,term_id,taxonomy,description) values (%s,%s,%s,%s)"
+    val = (en_term_id,en_term_id,'post_translations',translation)
+    cursor.execute(sql,val)
+
+
+    #th
+    th_prefix = "pll_84e"
+    th_random = ''.join(random.choices(string.ascii_lowercase + string.digits, k=10))
+    #insert wp_terms
+    cursor = connection_db.cursor()
+    sql = "INSERT INTO wordpress.wp_terms (name,slug,term_group) values (%s,%s,%s)"
+    val = (th_prefix+th_random,th_prefix+th_random,0)
+    cursor.execute(sql,val)
+    th_term_id = cursor.lastrowid
+    #insert wp_term_relationships
+    sql = "INSERT INTO wordpress.wp_term_relationships (object_id,term_taxonomy_id,term_order) values (%s,%s,%s)"
+    val = (product_th_id,th_term_id,0)
+    cursor.execute(sql,val)
+    #insert wp_term_taxonomy
+    sql = "INSERT INTO wordpress.wp_term_taxonomy (term_taxonomy_id,term_id,taxonomy,description) values (%s,%s,%s,%s)"
+    val = (th_term_id,th_term_id,'post_translations',translation)
+    cursor.execute(sql,val)
+
 
 def updateProduct(product):
     pass    
