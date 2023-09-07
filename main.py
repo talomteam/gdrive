@@ -345,7 +345,7 @@ async def file_product():
     file.GetContentFile(generate_filename)
 
     wb = openpyxl.load_workbook(generate_filename)
-    sheet =  wb['Exam']
+    sheet =  wb['Product']
     max_row = 4
 
     for row in range(3, max_row):
