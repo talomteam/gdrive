@@ -156,7 +156,7 @@ async def preview(fileb64,start: int = 1, end: int = 5 ):
 
         download_filename = 'downloads/%s.pdf' % (file_id)
         out_filename = 'previews/%s.pdf' % (file_id)
-        watermask_filename = 'images/watermask.pdf'
+        watermask_filename = 'images/watermark.pdf'
 
         file_preview_exists = exists(out_filename)
 
