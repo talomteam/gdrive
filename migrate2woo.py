@@ -23,7 +23,7 @@ def addProducts(product):
     file_images = list()
     for image in product["file_image"]:
         srcImage = {}
-        srcImage["src"] = "%s%s%s.webp"%(baseUrl,pathImage,image)
+        srcImage["src"] = "%s%s%s.jpg"%(baseUrl,pathImage,image)
         file_images.append(srcImage)
         
     ## create product en

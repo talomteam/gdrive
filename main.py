@@ -80,7 +80,7 @@ def getimage(file_id):
         width,height = image.size
         position = (int(width/2-width_of_watermark/2),int(height/2-height_of_watermark/2))
         image.paste(image_watermask,position,image_watermask)
-        image.save('/var/www/wordpress/gimages/%s.webp' % (file_id),format="webp")
+        image.save(generate_filename)
 
 
 
