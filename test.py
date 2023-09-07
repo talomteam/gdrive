@@ -20,32 +20,31 @@
 #print (result)
 
 
-# import all the libraries
-#from PIL import Image
-#image = Image.open("images/1r5lJiBr4iFezMdgvGuBfa1BHYQkZg4KC-34-600x375.jpg")
-#image_watermask = Image.open("images/T1C3.png")
-#width_of_watermark , height_of_watermark = image_watermask.size
-#width,height = image.size
-#position = (int(width/2-width_of_watermark/2),int(height/2-height_of_watermark/2))
+import openpyxl 
+generate_filename = 'x002.xlsx' 
 
-#image.paste(image_watermask,position,image_watermask)
-#image.save("images/sample.jpg")
-from PyPDF2 import PdfReader, PdfWriter
-download_filename = 'images/document.pdf'
-watermask_filename = 'images/watermask.pdf'
-pdf = PdfReader(open(download_filename, "rb"))
-pdf_writer = PdfWriter()
+wb = openpyxl.load_workbook(generate_filename)
+sheet =  wb['Product']
+max_row = 4
 
-watermask = PdfReader(open(watermask_filename, "rb"))
-watermask_page = watermask.pages[0]
+for row in range(3, max_row):
+        product = {}
+        product["no"] = sheet.cell(row=row,column=1).value
+        product["brand"] = sheet.cell(row=row,column=2).value.upper()
+        product["categories_en"] = sheet.cell(row=row,column=4).value.upper()
+        product["categories_th"] = sheet.cell(row=row,column=5).value.upper()
+        product["booktype_en"] = sheet.cell(row=row,column=7).value.upper()
+        product["booktype_th"] = sheet.cell(row=row,column=8).value.upper()
+        product["parts_no"] = sheet.cell(row=row,column=10).value
+        product["model"] = sheet.cell(row=row,column=11).value
+        product["serial_no"] = sheet.cell(row=row,column=12).value
+        product["page_no"] = str(int(sheet.cell(row=row,column=13).value))
+        product["file_type"] = sheet.cell(row=row,column=14).value
+        product["file_lang"] = sheet.cell(row=row,column=15).value.upper()
+        product["price"] = sheet.cell(row=row,column=17).value
+        product["price2"] = sheet.cell(row=row,column=22).value
+        #product["sku"] = 'S2Y-%s%s-%s%s-%s'%(brands[product["brand"]]["code"],categories[product["categories_en"]]["code"],booktypes[product["booktype_en"]]["code"],languages[product["file_lang"]],product["no"])
 
-
-for page in range(0,4):
-    content_page = pdf.pages[page]
-    #mediabox = content_page.mediabox
-    content_page.merge_page(watermask_page)
-    #content_page.mediabox = mediabox
-    pdf_writer.add_page(content_page)
-       
-pdf_writer.add_metadata(pdf.metadata)
-pdf_writer.write('images/sample.pdf')
+        product["file_download_id"] = (sheet.cell(row=row,column=24).value).split("/")[-2]
+        images = (sheet.cell(row=row,column=25).value).split(",")
+        print (product)

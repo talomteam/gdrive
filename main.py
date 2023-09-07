@@ -15,8 +15,7 @@ import pymysql.cursors
 from woocommerce import API
 
 from PIL import Image
-import matplotlib.pyplot as plt
-import numpy as np
+
 
 import csv
 import pandas as pd
@@ -363,7 +362,7 @@ async def file_product():
         product["file_type"] = sheet.cell(row=row,column=14).value
         product["file_lang"] = sheet.cell(row=row,column=15).value.upper()
         product["price"] = sheet.cell(row=row,column=17).value
-        product["price2"] = sheet.cell(row=row,column=18).value
+        product["price2"] = sheet.cell(row=row,column=22).value
         product["sku"] = 'S2Y-%s%s-%s%s-%s'%(brands[product["brand"]]["code"],categories[product["categories_en"]]["code"],booktypes[product["booktype_en"]]["code"],languages[product["file_lang"]],product["no"])
 
         product["file_download_id"] = (sheet.cell(row=row,column=24).value).split("/")[-2]
