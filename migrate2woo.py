@@ -8,7 +8,7 @@ wcapi = API(
     consumer_key="ck_2b201992a3b7205b97b91ebaae9b74cffd0492b2",
     consumer_secret="cs_43a4861af8b79e8d9f933c51fea31e1eb7b2af69",
     version="wc/v3",
-    timeout=20
+    timeout=60
 )
 connection_db = None
 ## create 
@@ -179,7 +179,7 @@ def updateTranslations(product_en_id,product_th_id):
 
 
 def updateProduct(col,product,row):
-    
+
     price = col.index('price') if 'price' in col else -1
     price2 = col.index('price2') if 'price2' in col else -1
     if price > -1  or price2 > -1:
