@@ -56,15 +56,15 @@ def addProducts(product):
                 "visible": False,
                 "variation": True,
                 "options": [
-                    "Hard copy",
-                    "Soft file"
+                    "Book",
+                    "PDF File"
                 ]
             }
         ],
         "default_attributes": [
             {
                 "id": 4,
-                "option": "Hard copy"
+                "option": "Book"
             },
             
         ],
@@ -104,15 +104,15 @@ def addProducts(product):
                 "visible": False,
                 "variation": True,
                 "options": [
-                    "รูปแบบไฟล์",
-                    "รูปเล่มหนังสือจริง"
+                    "หนังสือ",
+                    "ไฟล์"
                 ]
             }
         ],
         "default_attributes": [
             {
                 "id": 4,
-                "option": "รูปแบบไฟล์"
+                "option": "ไฟล์"
             },
             
         ],
@@ -215,7 +215,7 @@ def addVariation (product,productIden,productIdth):
         "attributes": [
             {
                 "id": 4,
-                "option": "Hard copy"
+                "option": "Book"
             }
         ]
     }
@@ -227,7 +227,7 @@ def addVariation (product,productIden,productIdth):
         "attributes": [
             {
                 "id": 4,
-                "option": "Soft file"
+                "option": "PDF File"
             }
         ],
         "downloads": [
@@ -246,7 +246,7 @@ def addVariation (product,productIden,productIdth):
         "attributes": [
             {
                 "id": 4,
-                "option": "รูปเล่มหนังสือจริง"
+                "option": "หนังสือ"
             }
         ]
     }
@@ -258,7 +258,7 @@ def addVariation (product,productIden,productIdth):
         "attributes": [
             {
                 "id": 4,
-                "option": "รูปแบบไฟล์"
+                "option": "ไฟล์"
             }
         ],
         "downloads": [
