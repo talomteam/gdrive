@@ -69,7 +69,7 @@ def addProducts(product):
             
         ],
         "lang":"en",
-        "images": file_images
+        #"images": file_images
         }
     print (data_en)
     
@@ -117,7 +117,7 @@ def addProducts(product):
             
         ],
         "lang":"th",
-        "images": file_images
+        #"images": file_images
         }
     print (data_th)
     
