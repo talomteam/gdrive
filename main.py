@@ -174,7 +174,7 @@ async def preview(fileb64,start: int = 1, end: int = 5 ):
         pdf = PdfReader(open(download_filename, "rb"))
         pdf_writer = PdfWriter()
         watermask = PdfReader(open(watermask_filename, "rb"))
-        watermask_page = watermask.getPage(0)
+        watermask_page = watermask.pages[0]
         #pages = 5
 
         #if len(pdf.pages) < pages:
