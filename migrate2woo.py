@@ -179,8 +179,11 @@ def updateTranslations(product_en_id,product_th_id):
 
 
 def updateProduct(col,product,row):
-    if col["price"] != None or col["price2"] != None:
-        updateVariation(col,product,row)    
+    #if col["price"] != None or col["price2"] != None:
+    #    updateVariation(col,product,row) 
+
+    if (col.get('price') is not None) or (col.get('price2') is not None)  :
+        updateVariation(col,product,row)
 
 def updateVariation (col,product,row):
     #en
