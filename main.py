@@ -345,35 +345,41 @@ async def file_product():
 
     wb = openpyxl.load_workbook(generate_filename)
     sheet =  wb['Product']
-    max_row = 4
+    max_row = sheet.max_row
+    start_row = 3
+    for row in range(start_row, max_row):
+        if sheet.cell(row=row,column=17).value != None and sheet.cell(row=row,column=22).value != None and sheet.cell(row=row,column=25).value != None and sheet.cell(row=row,column=24).value != None \
+        and sheet.cell(row=row,column=1).value != None and sheet.cell(row=row,column=2).value != None and sheet.cell(row=row,column=3).value != None and sheet.cell(row=row,column=4).value != None \
+        and sheet.cell(row=row,column=5).value != None and sheet.cell(row=row,column=6).value != None and sheet.cell(row=row,column=7).value != None and sheet.cell(row=row,column=8).value != None \
+        and sheet.cell(row=row,column=9).value != None and sheet.cell(row=row,column=10).value != None and sheet.cell(row=row,column=11).value != None and sheet.cell(row=row,column=12).value != None \
+        and sheet.cell(row=row,column=13).value != None and sheet.cell(row=row,column=14).value != None and sheet.cell(row=row,column=15).value != None :
+            
+            product = {}
+            product["no"] = sheet.cell(row=row,column=1).value
+            product["brand"] = sheet.cell(row=row,column=2).value.upper()
+            product["categories_en"] = sheet.cell(row=row,column=4).value.upper()
+            product["categories_th"] = sheet.cell(row=row,column=5).value.upper()
+            product["booktype_en"] = sheet.cell(row=row,column=7).value.upper()
+            product["booktype_th"] = sheet.cell(row=row,column=8).value.upper()
+            product["parts_no"] = sheet.cell(row=row,column=10).value
+            product["model"] = sheet.cell(row=row,column=11).value
+            product["serial_no"] = sheet.cell(row=row,column=12).value
+            product["page_no"] = str(int(sheet.cell(row=row,column=13).value))
+            product["file_type"] = sheet.cell(row=row,column=14).value
+            product["file_lang"] = sheet.cell(row=row,column=15).value.upper()
+            product["price"] = sheet.cell(row=row,column=17).value
+            product["price2"] = sheet.cell(row=row,column=22).value
+            product["sku"] = 'S2Y-%s%s-%s%s-%s'%(brands[product["brand"]]["code"],categories[product["categories_en"]]["code"],booktypes[product["booktype_en"]]["code"],languages[product["file_lang"]],product["no"])
 
-    for row in range(3, max_row):
-        product = {}
-        product["no"] = sheet.cell(row=row,column=1).value
-        product["brand"] = sheet.cell(row=row,column=2).value.upper()
-        product["categories_en"] = sheet.cell(row=row,column=4).value.upper()
-        product["categories_th"] = sheet.cell(row=row,column=5).value.upper()
-        product["booktype_en"] = sheet.cell(row=row,column=7).value.upper()
-        product["booktype_th"] = sheet.cell(row=row,column=8).value.upper()
-        product["parts_no"] = sheet.cell(row=row,column=10).value
-        product["model"] = sheet.cell(row=row,column=11).value
-        product["serial_no"] = sheet.cell(row=row,column=12).value
-        product["page_no"] = str(int(sheet.cell(row=row,column=13).value))
-        product["file_type"] = sheet.cell(row=row,column=14).value
-        product["file_lang"] = sheet.cell(row=row,column=15).value.upper()
-        product["price"] = sheet.cell(row=row,column=17).value
-        product["price2"] = sheet.cell(row=row,column=22).value
-        product["sku"] = 'S2Y-%s%s-%s%s-%s'%(brands[product["brand"]]["code"],categories[product["categories_en"]]["code"],booktypes[product["booktype_en"]]["code"],languages[product["file_lang"]],product["no"])
-
-        product["file_download_id"] = (sheet.cell(row=row,column=24).value).split("/")[-2]
-        images = (sheet.cell(row=row,column=25).value).split(",")
-        product["file_image"] = list()
-        for image in images:
-            if (image.strip() != ""):
-                product["file_image"].append(image.split("/")[-2])
-                getimage(image.split("/")[-2])
-        if product["price"] >= 0 and product["price2"] >= 0 :
-            product_update(product)
+            product["file_download_id"] = (sheet.cell(row=row,column=24).value).split("/")[-2]
+            images = (sheet.cell(row=row,column=25).value).split(",")
+            product["file_image"] = list()
+            for image in images:
+                if (image.strip() != ""):
+                    product["file_image"].append(image.split("/")[-2])
+                    getimage(image.split("/")[-2])
+            if product["price"] >= 0 and product["price2"] >= 0 :
+                product_update(product)
 
     return {"message": "file product ok"}
 

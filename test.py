@@ -25,9 +25,16 @@ generate_filename = 'x002.xlsx'
 
 wb = openpyxl.load_workbook(generate_filename)
 sheet =  wb['Product']
-max_row = 4
-
-for row in range(3, max_row):
+max_row = sheet.max_row
+start_row = 3
+print (max_row)
+for row in range(start_row, max_row):
+    if sheet.cell(row=row,column=17).value != None and sheet.cell(row=row,column=22).value != None and sheet.cell(row=row,column=25).value != None and sheet.cell(row=row,column=24).value != None \
+       and sheet.cell(row=row,column=1).value != None and sheet.cell(row=row,column=2).value != None and sheet.cell(row=row,column=3).value != None and sheet.cell(row=row,column=4).value != None \
+       and sheet.cell(row=row,column=5).value != None and sheet.cell(row=row,column=6).value != None and sheet.cell(row=row,column=7).value != None and sheet.cell(row=row,column=8).value != None \
+       and sheet.cell(row=row,column=9).value != None and sheet.cell(row=row,column=10).value != None and sheet.cell(row=row,column=11).value != None and sheet.cell(row=row,column=12).value != None \
+       and sheet.cell(row=row,column=13).value != None and sheet.cell(row=row,column=14).value != None and sheet.cell(row=row,column=15).value != None :
+    
         product = {}
         product["no"] = sheet.cell(row=row,column=1).value
         product["brand"] = sheet.cell(row=row,column=2).value.upper()
@@ -47,4 +54,6 @@ for row in range(3, max_row):
 
         product["file_download_id"] = (sheet.cell(row=row,column=24).value).split("/")[-2]
         images = (sheet.cell(row=row,column=25).value).split(",")
-        print (product)
+        if product["price"] >= 0 and product["price2"] >= 0 :
+            print(product["no"])
+        
