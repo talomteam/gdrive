@@ -136,7 +136,14 @@ def addProducts(product):
         print(sql,val)
     updateTranslations(result_en["id"],result_th["id"])
     addVariation(product,result_en["id"],result_th["id"])
-    
+
+    p_images = {
+        "images": file_images
+    }
+
+    result_images_en = wcapi.put("products/%s"%(result_en["id"]), p_images).json()
+    result_images_en = wcapi.put("products/%s"%(result_th["id"]), p_images).json()
+
 def updateTranslations(product_en_id,product_th_id):
 
     translation = 'a:2:{s:2:"th";i:%s;s:2:"en";i:%s;}'%(product_th_id,product_en_id)
