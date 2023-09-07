@@ -444,6 +444,6 @@ def product_update(product):
             print(sql)
             cursor.execute(sql,val)
             connection_db.commit()
-            woo.updateProduct(column,product,row)    
+            woo.updateProduct(columns,product,row)    
         
     
