@@ -23,7 +23,7 @@ def addProducts(product):
     file_images = list()
     for image in product["file_image"]:
         srcImage = {}
-        srcImage["src"] = "%s%s%s.jpg"%(baseUrl,pathImage,image)
+        srcImage["src"] = "%s%s%s.webp"%(baseUrl,pathImage,image)
         file_images.append(srcImage)
         
     ## create product en
@@ -178,11 +178,34 @@ def updateTranslations(product_en_id,product_th_id):
     cursor.execute(sql,val)
 
 
-def updateProduct(product):
-    pass    
+def updateProduct(col,product,row):
+    if col["price"] != None or col["price2"] != None:
+        updateVariation(col,product,row)    
 
-def updateVariation (options,productId):
-    pass
+def updateVariation (col,product,row):
+    #en
+    data_h_en = {
+        "regular_price": str(product["price2"]),
+    }
+    
+    data_s_en = {
+        "regular_price": str(product["price"]),
+        
+    }
+    #th
+    data_h_th = {
+        "regular_price": str(product["price2"]),
+    }
+    
+    data_s_th = {
+        "regular_price": str(product["price"]),
+        
+    }
+    result_h_en = wcapi.put("products/%s/variations/%s"%(row["woo_product_en_id"],row["woo_variation_h_en"]), data_h_en).json()
+    result_s_en = wcapi.put("products/%s/variations/%s"%(row["woo_product_en_id"],row["woo_variation_s_en"]), data_s_en).json()
+
+    result_h_th = wcapi.put("products/%s/variations/%s"%(row["woo_product_th_id"],row["woo_variation_h_th"]), data_h_th).json()
+    result_s_th = wcapi.put("products/%s/variations/%s"%(row["woo_product_th_id"],row["woo_variation_s_th"]), data_s_th).json()
     
 def addVariation (product,productIden,productIdth):
 

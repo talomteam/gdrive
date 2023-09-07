@@ -14,6 +14,10 @@ from pymysqlpool.pool import Pool
 import pymysql.cursors
 from woocommerce import API
 
+from PIL import Image
+import matplotlib.pyplot as plt
+import numpy as np
+
 import csv
 import pandas as pd
 import os
@@ -65,10 +69,21 @@ def getfile(file_id):
 
 def getimage(file_id):
     generate_filename = '/var/www/wordpress/gimages/%s.jpg' % (file_id)
+    watermask_filename = 'images/watermark.jpg'
     file_exists = exists(generate_filename)
     if not file_exists :
         file = drive.CreateFile({'id': file_id})
         file.GetContentFile(generate_filename)
+        image = Image.open(generate_filename)
+        image_watermask = Image.open(watermask_filename)
+        width_of_watermark , height_of_watermark = image_watermask.size
+        width,height = image.size
+        position = (int(width/2-width_of_watermark/2),int(height/2-height_of_watermark/2))
+        image.paste(image_watermask,position,image_watermask)
+        image.save('/var/www/wordpress/gimages/%s.webp' % (file_id),format="webp")
+
+
+
 
 def encryptcp(fileb64):
     return fernet.encrypt(fileb64.encode()).decode()
@@ -141,6 +156,7 @@ async def preview(fileb64,start: int = 1, end: int = 5 ):
 
         download_filename = 'downloads/%s.pdf' % (file_id)
         out_filename = 'previews/%s.pdf' % (file_id)
+        watermask_filename = 'images/watermask.pdf'
 
         file_preview_exists = exists(out_filename)
 
@@ -157,13 +173,17 @@ async def preview(fileb64,start: int = 1, end: int = 5 ):
 
         pdf = PdfReader(open(download_filename, "rb"))
         pdf_writer = PdfWriter()
+        watermask = PdfReader(open(watermask_filename, "rb"))
+        watermask_page = watermask.getPage(0)
         #pages = 5
 
         #if len(pdf.pages) < pages:
         #    pages = len(pdf.pages)
 
         for page in range((start-1),end):
-            pdf_writer.add_page(pdf.pages[page])
+            content_page = pdf.pages[page]
+            content_page.merge_page(watermask_page)
+            pdf_writer.add_page(content_page)
         
         pdf_writer.add_metadata(pdf.metadata)
         pdf_writer.write(out_filename)
@@ -353,7 +373,8 @@ async def file_product():
             if (image.strip() != ""):
                 product["file_image"].append(image.split("/")[-2])
                 getimage(image.split("/")[-2])
-        product_update(product)
+        if product["price"] >= 0 and product["price2"] >= 0 :
+            product_update(product)
 
     return {"message": "file product ok"}
 
