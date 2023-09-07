@@ -395,7 +395,8 @@ def checkValue(origin,word):
 def product_update(product):
     print (product)
     cursor = connection_db.cursor()
-    sql = "select * from products where no=%s Limit 1"
+    #sql = "select * from products where no=%s Limit 1"
+    sql = "select * from products INNER JOIN woo_products ON products.no = woo_products.product_no and products.no=%s Limit 1"
     val = (product["no"])
     cursor.execute(sql,val)
     row =  cursor.fetchone()
