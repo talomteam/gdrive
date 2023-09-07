@@ -69,7 +69,7 @@ def getfile(file_id):
 
 def getimage(file_id):
     generate_filename = '/var/www/wordpress/gimages/%s.jpg' % (file_id)
-    watermask_filename = 'images/watermark.jpg'
+    watermask_filename = 'images/watermark.png'
     file_exists = exists(generate_filename)
     if not file_exists :
         file = drive.CreateFile({'id': file_id})
