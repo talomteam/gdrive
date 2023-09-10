@@ -25,10 +25,11 @@ import openpyxl
 import migrate2woo as woo
 
 wcapi = API(
-    url="https://https://www.shopmanual2you.com/",
-    consumer_key="ck_2b201992a3b7205b97b91ebaae9b74cffd0492b2",
-    consumer_secret="cs_43a4861af8b79e8d9f933c51fea31e1eb7b2af69",
-    version="wc/v3"
+    url="https://www.shopmanual2you.com/",
+    consumer_key=os.environ.get("WC_CK"),
+    consumer_secret=os.environ.get("WC_CS"),
+    version="wc/v3",
+    timeout=60
 )
 
 dotenv_path = join(dirname(__file__), '.env')
@@ -80,9 +81,6 @@ def getimage(file_id):
         position = (int(width/2-width_of_watermark/2),int(height/2-height_of_watermark/2))
         image.paste(image_watermask,position,image_watermask)
         image.save(generate_filename)
-
-
-
 
 def encryptcp(fileb64):
     return fernet.encrypt(fileb64.encode()).decode()
@@ -332,7 +330,7 @@ async def lists(path):
 
     gfile = drive.CreateFile({'parents': [{'id': path}]})
     gfile.SetContentFile(xls_filename)
-    gfile.Upload()
+    gfile
 
     return {"message": "Please check google drive file name %s" % (xls_filename)}
 
@@ -341,6 +339,7 @@ async def file_product():
     file_id = '11OK7R6zqW7h7szSqI3F_gP4UVg-1mDps'
     generate_filename = '%s.xlsx' % (file_id)
     file = drive.CreateFile({'id': file_id})
+    file.update
     file.GetContentFile(generate_filename)
 
     wb = openpyxl.load_workbook(generate_filename)

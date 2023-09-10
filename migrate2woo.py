@@ -2,11 +2,12 @@ from woocommerce import API
 import os
 import random
 import string
+import os
 
 wcapi = API(
     url="https://www.shopmanual2you.com/",
-    consumer_key="ck_2b201992a3b7205b97b91ebaae9b74cffd0492b2",
-    consumer_secret="cs_43a4861af8b79e8d9f933c51fea31e1eb7b2af69",
+    consumer_key=os.environ.get("WC_CK"),
+    consumer_secret=os.environ.get("WC_CS"),
     version="wc/v3",
     timeout=60
 )
@@ -68,12 +69,11 @@ def addProducts(product):
             },
             
         ],
-        "lang":"en",
-        #"images": file_images
+        "lang":"en"
         }
     print (data_en)
     
-    result_en = wcapi.post("products", data_en).json()
+   
     ## create product th
     data_th = {
         "name": ("%s %s %s %s"%(product["brand"],product["categories_th"],product["booktype_th"],product["model"])),
@@ -116,33 +116,38 @@ def addProducts(product):
             },
             
         ],
-        "lang":"th",
-        #"images": file_images
+        "lang":"th"
         }
-    print (data_th)
     
-    result_th = wcapi.post("products", data_th).json()
-    print("product en id",result_en["id"] )
-    print("product th id",result_th["id"] )
-    #add ref db
+    print (data_th)
     try:
+        result_en = wcapi.post("products", data_en).json()
+        result_th = wcapi.post("products", data_th).json()
+        print("product en id",result_en["id"] )
+        print("product th id",result_th["id"] )
+        #add ref db
+   
         cursor = connection_db.cursor()
         sql = "INSERT INTO woo_products (product_no,woo_product_en_id,woo_product_th_id) values (%s,%s,%s)"
         val = (product["no"],result_en["id"],result_th["id"])
         cursor.execute(sql,val)
         connection_db.commit()
+
+        updateTranslations(result_en["id"],result_th["id"])
+        addVariation(product,result_en["id"],result_th["id"])
     except Exception as e:
         print(e)
-        print(sql,val)
-    updateTranslations(result_en["id"],result_th["id"])
-    addVariation(product,result_en["id"],result_th["id"])
+        #print(sql,val)
+    
 
     p_images = {
         "images": file_images
     }
-
-    result_images_en = wcapi.put("products/%s"%(result_en["id"]), p_images).json()
-    result_images_en = wcapi.put("products/%s"%(result_th["id"]), p_images).json()
+    try :
+        result_images_en = wcapi.put("products/%s"%(result_en["id"]), p_images).json()
+        result_images_en = wcapi.put("products/%s"%(result_th["id"]), p_images).json()
+    except Exception as e:
+        print(e)
 
 def updateTranslations(product_en_id,product_th_id):
 
