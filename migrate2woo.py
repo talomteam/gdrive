@@ -226,6 +226,13 @@ def updateVariation (col,product,row):
     
 def addVariation (product,productIden,productIdth):
 
+    pfiles = list()
+    for download in product["download"]:
+        pfile = {}
+        pfile["name"] = (product["brand"]+"-"+product["parts_no"])
+        pfile["file"] = download
+        pfiles.append(pfile)
+
     ## create product variation en
     data_h_en = {
         "regular_price": str(product["price2"]),
@@ -237,6 +244,7 @@ def addVariation (product,productIden,productIdth):
         ]
     }
     
+    
     data_s_en = {
         "regular_price": str(product["price"]),
         "virtual": True,
@@ -247,12 +255,7 @@ def addVariation (product,productIden,productIdth):
                 "option": "PDF File"
             }
         ],
-        "downloads": [
-            {
-                "name": (product["brand"]+"-"+product["parts_no"]),
-                "file": product["download"]
-            }
-        ],
+        "downloads": pfiles
     }
     result_h_en = wcapi.post("products/%s/variations"%(productIden), data_h_en).json()
     result_s_en = wcapi.post("products/%s/variations"%(productIden), data_s_en).json()
@@ -278,12 +281,7 @@ def addVariation (product,productIden,productIdth):
                 "option": "ไฟล์"
             }
         ],
-        "downloads": [
-            {
-                "name":  (product["brand"]+"-"+product["parts_no"]),
-                "file": product["download"]
-            }
-        ]
+        "downloads": pfiles
     }
     result_h_th = wcapi.post("products/%s/variations"%(productIdth), data_h_th).json()
     result_s_th = wcapi.post("products/%s/variations"%(productIdth), data_s_th).json()

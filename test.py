@@ -20,7 +20,8 @@
 #print (result)
 
 
-import openpyxl 
+#import openpyxl 
+
 generate_filename = 'x002.xlsx' 
 
 wb = openpyxl.load_workbook(generate_filename)

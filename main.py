@@ -53,6 +53,8 @@ db_user = os.environ.get("DB_USER")
 db_password = os.environ.get("DB_PASSWORD")
 db_name = os.environ.get("DB_NAME")
 
+file_product = os.environ.get("FILE_PRODUCT")
+
 
 fernet = Fernet(key)
 
@@ -336,10 +338,9 @@ async def lists(path):
 
 @app.get("/v1/files/product")
 async def file_product():
-    file_id = '11OK7R6zqW7h7szSqI3F_gP4UVg-1mDps'
+    file_id = file_product
     generate_filename = '%s.xlsx' % (file_id)
     file = drive.CreateFile({'id': file_id})
-    file.update
     file.GetContentFile(generate_filename)
 
     wb = openpyxl.load_workbook(generate_filename)
@@ -369,8 +370,13 @@ async def file_product():
             product["price"] = sheet.cell(row=row,column=17).value
             product["price2"] = sheet.cell(row=row,column=22).value
             product["sku"] = 'S2Y-%s%s-%s%s-%s'%(brands[product["brand"]]["code"],categories[product["categories_en"]]["code"],booktypes[product["booktype_en"]]["code"],languages[product["file_lang"]],product["no"])
+            
+            pfiles = (sheet.cell(row=row,column=24).value).split(",")
+            pfilelist = list()
+            for pfile in pfiles:
+                pfilelist.append(pfile.split("/")[-2])
 
-            product["file_download_id"] = (sheet.cell(row=row,column=24).value).split("/")[-2]
+            product["file_download_id"] = ','.join(pfilelist)
             images = (sheet.cell(row=row,column=25).value).split(",")
             product["file_image"] = list()
             for image in images:
@@ -414,14 +420,39 @@ def product_update(product):
         sql = "INSERT INTO products (no,brand,categories_en,categories_th,booktype_en,booktype_th,parts_no,model,serial_no,page_no,file_type,file_lang,price,sku,file_download_id,file_image,price2) value (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
         cursor.execute(sql,val)
         connection_db.commit()
-        preview = encryptcp("preview"+product['file_download_id'])
-        download = encryptcp("download"+product['file_download_id'])
-        pdfjs_template = '[pdfjs-viewer url= "https://{domain}/gdrive/preview/{file_id}" viewer_width=100% viewer_height=800px fullscreen=true download=true print=true]'.format(
+
+        pfiles = product['file_download_id'].split(",")
+        product["preview"] = list()
+        product["download"] = list()
+        for pfile in pfiles:
+            preview = encryptcp("preview"+pfile)
+            pdfjs_template = '[pdfjs-viewer url= "https://{domain}/gdrive/preview/{file_id}" viewer_width=100% viewer_height=800px fullscreen=true download=true print=true]'.format(
                     domain=domain,file_id=preview)
-        download_template = 'https://{domain}/gdrive/download/{file_id}'.format(
+            product["preview"].append(pdfjs_template)
+
+            download = encryptcp("download"+product['file_download_id'])
+            download_template = 'https://{domain}/gdrive/download/{file_id}'.format(
                     domain=domain,file_id=download)
-        product["download"] = download_template
-        product["preview"] = pdfjs_template
+            product["download"].append( download_template)
+
+            
+
+
+
+        #preview = encryptcp("preview"+product['file_download_id'])
+        #pdfjs_template = '[pdfjs-viewer url= "https://{domain}/gdrive/preview/{file_id}" viewer_width=100% viewer_height=800px fullscreen=true download=true print=true]'.format(
+        #            domain=domain,file_id=preview)
+        #product["preview"] = pdfjs_template
+
+
+
+        #download = encryptcp("download"+product['file_download_id'])
+        #download_template = 'https://{domain}/gdrive/download/{file_id}'.format(
+        #            domain=domain,file_id=download)
+        #product["download"] = download_template
+        
+
+
         product["brands_ref"] = brands
         product["categories_ref"] = categories
         product["booktype_ref"] = booktypes
