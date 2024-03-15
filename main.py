@@ -80,7 +80,8 @@ def getimage(file_id):
         image_watermask = Image.open(watermask_filename)
         width_of_watermark , height_of_watermark = image_watermask.size
         width,height = image.size
-        position = (int(width/2-width_of_watermark/2),int(height/2-height_of_watermark/2))
+        #position = (int(width/2-width_of_watermark/2),int(height/2-height_of_watermark/2))
+        position = (int(height-height_of_watermark),int(width-width_of_watermark))
         image.paste(image_watermask,position,image_watermask)
         image.save(generate_filename)
 
